@@ -1,0 +1,28 @@
+El usuario de las máquinas es: sd
+
+Máquina 1
+
+ip/hostname: 10.10.28.45
+
+contraseña: DNSXTnhAQwJkohs
+
+ 
+Máquina 2
+
+ip/hostname: 10.10.28.46
+
+contraseña: DZQEGFPNQDwlhRd
+
+ 
+Máquina 2 
+
+ip/hostname: 10.10.28.47
+
+contraseña: rnjwNvzOswpBntG
+
+ 
+Máquina 4
+
+ip/hostname: 10.10.28.48
+
+contraseña: zlIKcSqqUwNhfps
