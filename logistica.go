@@ -14,7 +14,7 @@ import{
   "time"
 
   "google.golang.org/grpc"
-  protos ""
+  protos "github.com/JhonGen/TAREA1_SD"
 
 }
 
