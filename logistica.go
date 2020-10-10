@@ -27,14 +27,15 @@ func main(){
   }
 }
 
-func (s *LogisticaServer) ShowOrder(ctx context.Context, )(*protos.Sample,error){
+func (s *LogisticaServer) ShowOrder(ctx context.Context, )(*protos.Response,error){
 
 }
 
-func (s *LogisticaServer) MakeOrder(ctx context.Context, )(*protos.Confirmation,error){
+func (s *LogisticaServer) MakeOrder(ctx context.Context, )(*protos.Response,error){
   return nil;
 }
 
-func (s *LogisticaServer) GetStatus(ctx context.Context, id *protos.Order)(*protos.Response, error){
+func (s *LogisticaServer) GetStatus(ctx context.Context, id *protos.Order)(*protos.Status, error){
+  
 
 }
