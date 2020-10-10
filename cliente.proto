@@ -2,13 +2,17 @@ syntax="proto3";
 
 package cliente;
 
-message Orden{
+message Order{
   string id = 1;
   string nombre = 2;
-  int64 valor = 3;
+  int32 valor = 3;
   string tienda = 4;
   string destino = 5;
-  int64 prioritario = 6;
+  int32 prioritario = 6;
+}
+
+message Request{
+  string id =1;
 }
 
 message Sample{
@@ -24,7 +28,7 @@ message Status{
 }
 
 service Solicitud {
-  rpc MostrarOrden(Orden) returns (Sample){}
-  rpc Ordenar(Orden) returns (Confirmation){}
-  rpc Estado(Orden) returns (Status){}
+  rpc ShowOrder(Order) returns (Sample){}
+  rpc MakeOrder(Order) returns (Confirmation){}
+  rpc GetStatus(Order) returns (Status){}
 }

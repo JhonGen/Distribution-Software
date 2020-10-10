@@ -14,7 +14,7 @@ import{
   "time"
 
   "google.golang.org/grpc"
-
+  protos ""
 
 }
 
@@ -25,18 +25,16 @@ func main(){
   if err !=nil {
     panic(err)
   }
-  srv := grpc.NewServer()
-  protos.RegisterMostrarOrdenService(srv, &LogisticaServer{})
-
-  if peticion := srv.Serve(listener); peticion != nil{
-    panic(err)
-  }
 }
 
-func (s *LogisticaServer) MostrarOrden(ctx context.Context, *protos Orden)(*protos.Response,error){
+func (s *LogisticaServer) ShowOrder(ctx context.Context, *protos Order)(*protos.Response,error){
 
 }
 
-func (s *LogisticaServer) Ordenar(ctx context.Context, *proto Orden)(*proto.Response,error){
+func (s *LogisticaServer) MakeOrder(ctx context.Context, *proto Order)(*protos.Response,error){
   return nil;
+}
+
+func (s *LogisticaServer) GetStatus(ctx context.Context, *proto Order)(*protos.Response, error){
+
 }
