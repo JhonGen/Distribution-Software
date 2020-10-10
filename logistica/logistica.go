@@ -18,7 +18,9 @@ import{
 
 }
 
-type LogisticaServer struct{}
+type LogisticaServer struct{
+  queuedOrders []*protos.Order
+}
 
 func main(){
   listener, err := net.Listen("tcp", ":4040")
