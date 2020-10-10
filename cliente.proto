@@ -1,0 +1,30 @@
+syntax="proto3";
+
+package cliente;
+
+message Orden{
+  string id = 1;
+  string nombre = 2;
+  int64 valor = 3;
+  string tienda = 4;
+  string destino = 5;
+  int64 prioritario = 6;
+}
+
+message Sample{
+  string sample = 1;
+}
+
+message Confirmation{
+  string confirmation_message= 1;
+}
+
+message Status{
+  bool state = 1;
+}
+
+service Solicitud {
+  rpc MostrarOrden(Orden) returns (Sample){}
+  rpc Ordenar(Orden) returns (Confirmation){}
+  rpc Estado(Orden) returns (Status){}
+}
