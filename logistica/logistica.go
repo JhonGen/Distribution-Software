@@ -1,42 +1,45 @@
-package logistica
+package main
 
-import{
-  "context"
-  "encoding/jason"
-  "flag"
-  "fmt"
-  "io"
-  "io/ioutil"
-  "log"
-  "math"
-  "net"
-  "sync"
-  "time"
+import (
+	"context"
+	"fmt"
+	"net"
 
-  "google.golang.org/grpc"
-  protos "github.com/JhonGen/TAREA1_SD/tree/main/clienteproto"
+	protos "../clienteproto"
+	"google.golang.org/grpc"
+)
+
+type LogisticaServer struct {
+	protos.UnimplementedSolicitudServer
+	queuedOrders []*protos.Order
+}
+
+func main() {
+	listener, err := net.Listen("tcp", "localhost:4040")
+	if err != nil {
+		panic(err)
+	}
+	var opts []grpc.ServerOption
+	grpcServer := grpc.NewServer(opts...)
+	protos.RegisterSolicitudServer(grpcServer, &LogisticaServer{})
+	fmt.Printf("escuchando")
+	grpcServer.Serve(listener)
+
+	defer grpcServer.Stop()
+}
+
+func (s *LogisticaServer) ShowOrder(ctx context.Context, order *protos.Order) (*protos.Sample, error) {
+
+	fmt.Printf("%v", order)
+
+	return &protos.Sample{}, nil
 
 }
 
-type LogisticaServer struct{
-  queuedOrders []*protos.Order
+func (s *LogisticaServer) MakeOrder(ctx context.Context, order *protos.Order) (*protos.Confirmation, error) {
+	return nil, nil
 }
 
-func main(){
-  listener, err := net.Listen("tcp", ":4040")
-  if err !=nil {
-    panic(err)
-  }
-}
-
-func (s *LogisticaServer) ShowOrder(ctx context.Context, )(*protos.Sample,error){
-
-}
-
-func (s *LogisticaServer) MakeOrder(ctx context.Context, )(*protos.Confirmation,error){
-  return nil;
-}
-
-func (s *LogisticaServer) GetStatus(ctx context.Context, id *protos.Order)(*protos.Response, error){
-
+func (s *LogisticaServer) GetStatus(ctx context.Context, id *protos.Order) (*protos.Status, error) {
+	return nil, nil
 }
