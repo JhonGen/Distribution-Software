@@ -48,18 +48,23 @@ func main() {
 			order.Valor = int32(valorInt)
 			order.Tienda = lineaSeparada[3]
 			order.Destino = lineaSeparada[4]
-			piroritarioBool, _ := strconv.ParseBool(lineaSeparada[5])
-			order.Prioritario = piroritarioBool
-			sample, err := client.ShowOrder(ctx, &order)
-			if err != nil {
+			if *tipoCliente == "pymes" {
+				prioritarioBool, _ := strconv.ParseBool(lineaSeparada[5])
+				order.Prioritario = prioritarioBool
+			}
+			if *tipoCliente == "retail" {
+				order.Prioritario = true
+			}
+			sample, err3 := client.ShowOrder(ctx, &order)
+			fmt.Printf("%v\n", sample)
+			if err3 != nil {
 				panic(err)
 			}
-			fmt.Printf("%v\n", sample)
 
 		}
 
-		if err := scanner.Err(); err != nil {
-			log.Fatal(err)
+		if err4 := scanner.Err(); err4 != nil {
+			log.Fatal(err4)
 		}
 	}
 	defer conn.Close()
