@@ -28,7 +28,7 @@ message Status{
 }
 
 service Solicitud {
-  rpc ShowOrderPymes(Order) returns (Sample){}
-  rpc MakeOrderPymes(Order) returns (Confirmation){}
+  rpc ShowOrder(Order) returns (Sample){}
+  rpc MakeOrder(Order) returns (Confirmation){}
   rpc GetStatus(Request) returns (Status){}
 }
