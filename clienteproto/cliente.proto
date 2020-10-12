@@ -8,7 +8,7 @@ message Order{
   int32 valor = 3;
   string tienda = 4;
   string destino = 5;
-  int32 prioritario = 6;
+  bool prioritario = 6;
 }
 
 message Request{

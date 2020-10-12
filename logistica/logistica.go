@@ -15,7 +15,7 @@ type LogisticaServer struct {
 }
 
 func main() {
-	listener, err := net.Listen("tcp", "10.10.28.47:4040")
+	listener, err := net.Listen("tcp", "localhost:4040")
 	if err != nil {
 		panic(err)
 	}
@@ -30,7 +30,7 @@ func main() {
 
 func (s *LogisticaServer) ShowOrder(ctx context.Context, order *protos.Order) (*protos.Sample, error) {
 
-	fmt.Printf("%v", order)
+	fmt.Printf("%v\n", order)
 
 	return &protos.Sample{}, nil
 
