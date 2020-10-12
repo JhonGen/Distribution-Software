@@ -14,7 +14,7 @@ ip/hostname: 10.10.28.46
 contraseña: DZQEGFPNQDwlhRd
 
  
-Máquina 2 
+Máquina 3 
 
 ip/hostname: 10.10.28.47
 
