@@ -14,6 +14,15 @@ type LogisticaServer struct {
 	queuedOrders []*protos.Order
 }
 
+func orderInSlice(a *protos.Order, list []*protos.Order) bool {
+	for _, b := range list {
+		if b.Id == a.Id {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 	listener, err := net.Listen("tcp", "localhost:4040")
 	if err != nil {
@@ -30,15 +39,16 @@ func main() {
 
 func (s *LogisticaServer) ShowOrder(ctx context.Context, order *protos.Order) (*protos.Sample, error) {
 
-	fmt.Printf("%v\n", order)
-
 	return &protos.Sample{}, nil
 
 }
 
 func (s *LogisticaServer) MakeOrder(ctx context.Context, order *protos.Order) (*protos.Confirmation, error) {
-	s.queuedOrders = append(s.queuedOrders, order)
-	fmt.Printf("%v\n", s.queuedOrders)
+	if !orderInSlice(order, s.queuedOrders) {
+		s.queuedOrders = append(s.queuedOrders, order)
+	} else {
+		fmt.Printf("ORDER ALREADY IN QUEUE\n")
+	}
 	return &protos.Confirmation{}, nil
 }
 
