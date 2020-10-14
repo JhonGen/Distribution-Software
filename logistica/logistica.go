@@ -4,19 +4,26 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"time"
 
 	protos "../clienteproto"
 	"google.golang.org/grpc"
 )
 
-type LogisticaServer struct {
-	protos.UnimplementedSolicitudServer
-	queuedOrders []*protos.Order
+type Solicitud struct {
+	time.Time
+	Order  *protos.Order
+	Status string
 }
 
-func orderInSlice(a *protos.Order, list []*protos.Order) bool {
+type LogisticaServer struct {
+	protos.UnimplementedSolicitudServer
+	queuedOrders []Solicitud
+}
+
+func orderInSlice(a *protos.Order, list []Solicitud) bool {
 	for _, b := range list {
-		if b.Id == a.Id && a.Nombre == b.Nombre {
+		if b.Order.Id == a.Id && a.Nombre == b.Order.Nombre {
 			return true
 		}
 	}
@@ -46,8 +53,14 @@ func (s *LogisticaServer) ShowOrder(ctx context.Context, order *protos.Order) (*
 func (s *LogisticaServer) MakeOrder(ctx context.Context, order *protos.Order) (*protos.Confirmation, error) {
 	confirmation := &protos.Confirmation{}
 	if !orderInSlice(order, s.queuedOrders) {
-		s.queuedOrders = append(s.queuedOrders, order)
+		solicitud := Solicitud{}
+		t := time.Now()
+		solicitud.Time = t
+		solicitud.Order = order
+		solicitud.Status = "En espera"
+		s.queuedOrders = append(s.queuedOrders, solicitud)
 		confirmation.ConfirmationMessage = "Order added succesfully"
+
 		return confirmation, nil
 	} else {
 		confirmation.ConfirmationMessage = "ORDER ALREADY IN QUEUE\n"
