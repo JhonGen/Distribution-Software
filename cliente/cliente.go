@@ -17,6 +17,7 @@ import (
 
 var (
 	tipoCliente = flag.String("tipo_cliente", "", "tipo de cliente")
+	delay       = flag.Int("delay", 0, " tiempo de espera en segundos")
 	consulta    = flag.String("id", "", "id de la consulta")
 )
 
@@ -68,7 +69,11 @@ func main() {
 			if err3 != nil {
 				panic(err4)
 			}
-			time.Sleep(time.Second)
+			i := 1
+			for i <= *delay {
+				time.Sleep(time.Second)
+				i += 1
+			}
 		}
 
 		if err4 := scanner.Err(); err4 != nil {

@@ -12,8 +12,9 @@ import (
 
 type Solicitud struct {
 	time.Time
-	Order  *protos.Order
-	Status string
+	Order       *protos.Order
+	Seguimiento string
+	Status      string
 }
 
 type LogisticaServer struct {
