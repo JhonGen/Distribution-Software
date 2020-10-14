@@ -25,8 +25,7 @@ func main() {
 	fmt.Printf("tipo_cliente: %v\n", *tipoCliente)
 	conn, err := grpc.Dial("localhost:4040", grpc.WithInsecure())
 	client := protos.NewSolicitudClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+
 	if err != nil {
 		panic(err)
 	}
@@ -40,6 +39,8 @@ func main() {
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
 			fmt.Println(scanner.Text())
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
 			lineaSeparada := strings.Split(scanner.Text(), ",")
 			order := protos.Order{}
 			order.Id = lineaSeparada[0]
@@ -67,7 +68,7 @@ func main() {
 			if err3 != nil {
 				panic(err4)
 			}
-
+			time.Sleep(time.Second)
 		}
 
 		if err4 := scanner.Err(); err4 != nil {

@@ -16,7 +16,7 @@ type LogisticaServer struct {
 
 func orderInSlice(a *protos.Order, list []*protos.Order) bool {
 	for _, b := range list {
-		if b.Id == a.Id {
+		if b.Id == a.Id && a.Nombre == b.Nombre {
 			return true
 		}
 	}
@@ -44,12 +44,15 @@ func (s *LogisticaServer) ShowOrder(ctx context.Context, order *protos.Order) (*
 }
 
 func (s *LogisticaServer) MakeOrder(ctx context.Context, order *protos.Order) (*protos.Confirmation, error) {
+	confirmation := &protos.Confirmation{}
 	if !orderInSlice(order, s.queuedOrders) {
 		s.queuedOrders = append(s.queuedOrders, order)
+		confirmation.ConfirmationMessage = "Order added succesfully"
+		return confirmation, nil
 	} else {
-		fmt.Printf("ORDER ALREADY IN QUEUE\n")
+		confirmation.ConfirmationMessage = "ORDER ALREADY IN QUEUE\n"
+		return confirmation, nil
 	}
-	return &protos.Confirmation{}, nil
 }
 
 func (s *LogisticaServer) GetStatus(ctx context.Context, id *protos.Order) (*protos.Status, error) {

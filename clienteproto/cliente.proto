@@ -20,7 +20,7 @@ message Sample{
 }
 
 message Confirmation{
-  string confirmation_message= 1;
+  string ConfirmationMessage= 1;
 }
 
 message Status{
