@@ -37,7 +37,9 @@ func (s *LogisticaServer) ShowOrder(ctx context.Context, order *protos.Order) (*
 }
 
 func (s *LogisticaServer) MakeOrder(ctx context.Context, order *protos.Order) (*protos.Confirmation, error) {
-	return nil, nil
+	s.queuedOrders = append(s.queuedOrders, order)
+	fmt.Printf("%v\n", s.queuedOrders)
+	return &protos.Confirmation{}, nil
 }
 
 func (s *LogisticaServer) GetStatus(ctx context.Context, id *protos.Order) (*protos.Status, error) {

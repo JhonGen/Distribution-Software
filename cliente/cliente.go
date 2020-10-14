@@ -56,9 +56,16 @@ func main() {
 				order.Prioritario = true
 			}
 			sample, err3 := client.ShowOrder(ctx, &order)
+			confirmation, err4 := client.MakeOrder(ctx, &order)
+			fmt.Printf("%v\n", confirmation)
 			fmt.Printf("%v\n", sample)
+
+			if err4 != nil {
+				panic(err3)
+			}
+
 			if err3 != nil {
-				panic(err)
+				panic(err4)
 			}
 
 		}
