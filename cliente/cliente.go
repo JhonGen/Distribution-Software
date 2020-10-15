@@ -21,6 +21,45 @@ var (
 	consulta    = flag.String("id", "", "id de la consulta")
 )
 
+func ShowMakeOrder(linea string, client protos.SolicitudClient) {
+	fmt.Println(linea)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	lineaSeparada := strings.Split(linea, ",")
+	order := protos.Order{}
+	order.Id = lineaSeparada[0]
+	order.Nombre = lineaSeparada[1]
+	valorInt, _ := strconv.ParseInt(lineaSeparada[2], 10, 32)
+	order.Valor = int32(valorInt)
+	order.Tienda = lineaSeparada[3]
+	order.Destino = lineaSeparada[4]
+	if *tipoCliente == "pymes" {
+		prioritarioBool, _ := strconv.ParseBool(lineaSeparada[5])
+		order.Prioritario = prioritarioBool
+	}
+	if *tipoCliente == "retail" {
+		order.Prioritario = true
+	}
+	sample, err3 := client.ShowOrder(ctx, &order)
+	confirmation, err4 := client.MakeOrder(ctx, &order)
+	fmt.Printf("%v\n", confirmation)
+	fmt.Printf("%v\n", sample)
+
+	if err4 != nil {
+		panic(err3)
+	}
+
+	if err3 != nil {
+		panic(err4)
+	}
+	i := 1
+	for i <= *delay {
+		time.Sleep(time.Second)
+		i += 1
+	}
+
+}
+
 func main() {
 	flag.Parse()
 	fmt.Printf("tipo_cliente: %v\n", *tipoCliente)
@@ -39,41 +78,8 @@ func main() {
 
 		scanner := bufio.NewScanner(file)
 		for scanner.Scan() {
-			fmt.Println(scanner.Text())
-			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-			defer cancel()
-			lineaSeparada := strings.Split(scanner.Text(), ",")
-			order := protos.Order{}
-			order.Id = lineaSeparada[0]
-			order.Nombre = lineaSeparada[1]
-			valorInt, _ := strconv.ParseInt(lineaSeparada[2], 10, 32)
-			order.Valor = int32(valorInt)
-			order.Tienda = lineaSeparada[3]
-			order.Destino = lineaSeparada[4]
-			if *tipoCliente == "pymes" {
-				prioritarioBool, _ := strconv.ParseBool(lineaSeparada[5])
-				order.Prioritario = prioritarioBool
-			}
-			if *tipoCliente == "retail" {
-				order.Prioritario = true
-			}
-			sample, err3 := client.ShowOrder(ctx, &order)
-			confirmation, err4 := client.MakeOrder(ctx, &order)
-			fmt.Printf("%v\n", confirmation)
-			fmt.Printf("%v\n", sample)
+			ShowMakeOrder(scanner.Text(), client)
 
-			if err4 != nil {
-				panic(err3)
-			}
-
-			if err3 != nil {
-				panic(err4)
-			}
-			i := 1
-			for i <= *delay {
-				time.Sleep(time.Second)
-				i += 1
-			}
 		}
 
 		if err4 := scanner.Err(); err4 != nil {
