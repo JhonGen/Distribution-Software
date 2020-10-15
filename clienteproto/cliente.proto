@@ -11,8 +11,8 @@ message Order{
   bool prioritario = 6;
 }
 
-message Request{
-  string id =1;
+message CodigoSeguimiento{
+  int32 codigo =1;
 }
 
 message Sample{
@@ -24,11 +24,11 @@ message Confirmation{
 }
 
 message Status{
-  bool state = 1;
+  string state = 1;
 }
 
 service Solicitud {
   rpc ShowOrder(Order) returns (Sample){}
-  rpc MakeOrder(Order) returns (Confirmation){}
-  rpc GetStatus(Request) returns (Status){}
+  rpc MakeOrder(Order) returns (Confirmation) ; (CodigoSeguimiento){}
+  rpc GetStatus(CodigoSeguimiento) returns (Status){}
 }

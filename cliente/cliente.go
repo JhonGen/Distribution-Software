@@ -18,7 +18,7 @@ import (
 var (
 	tipoCliente = flag.String("tipo_cliente", "", "tipo de cliente")
 	delay       = flag.Int("delay", 0, " tiempo de espera en segundos")
-	consulta    = flag.String("id", "", "id de la consulta")
+	consulta    = flag.Int("codigo", 0, "id de la consulta")
 )
 
 func ShowMakeOrder(linea string, client protos.SolicitudClient) {
@@ -41,23 +41,34 @@ func ShowMakeOrder(linea string, client protos.SolicitudClient) {
 		order.Prioritario = true
 	}
 	sample, err3 := client.ShowOrder(ctx, &order)
+	if err3 != nil {
+		panic(err3)
+	}
 	confirmation, err4 := client.MakeOrder(ctx, &order)
+	if err4 != nil {
+		panic(err4)
+	}
 	fmt.Printf("%v\n", confirmation)
 	fmt.Printf("%v\n", sample)
 
-	if err4 != nil {
-		panic(err3)
-	}
-
-	if err3 != nil {
-		panic(err4)
-	}
 	i := 1
 	for i <= *delay {
 		time.Sleep(time.Second)
 		i += 1
 	}
 
+}
+
+func obtenerEstado(codigo int, client protos.SolicitudClient) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	codigoSeguimiento := protos.CodigoSeguimiento{}
+	codigoSeguimiento.Codigo = int32(codigo)
+	status, err := client.GetStatus(ctx, &codigoSeguimiento)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%v\n", status)
 }
 
 func main() {
@@ -86,6 +97,7 @@ func main() {
 			log.Fatal(err4)
 		}
 	}
-	defer conn.Close()
 
+	defer conn.Close()
+	obtenerEstado(*consulta, client)
 }

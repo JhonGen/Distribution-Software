@@ -19,7 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 type SolicitudClient interface {
 	ShowOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Sample, error)
 	MakeOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Confirmation, error)
-	GetStatus(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Status, error)
+	GetStatus(ctx context.Context, in *CodigoSeguimiento, opts ...grpc.CallOption) (*Status, error)
 }
 
 type solicitudClient struct {
@@ -48,7 +48,7 @@ func (c *solicitudClient) MakeOrder(ctx context.Context, in *Order, opts ...grpc
 	return out, nil
 }
 
-func (c *solicitudClient) GetStatus(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Status, error) {
+func (c *solicitudClient) GetStatus(ctx context.Context, in *CodigoSeguimiento, opts ...grpc.CallOption) (*Status, error) {
 	out := new(Status)
 	err := c.cc.Invoke(ctx, "/cliente.Solicitud/GetStatus", in, out, opts...)
 	if err != nil {
@@ -63,7 +63,7 @@ func (c *solicitudClient) GetStatus(ctx context.Context, in *Order, opts ...grpc
 type SolicitudServer interface {
 	ShowOrder(context.Context, *Order) (*Sample, error)
 	MakeOrder(context.Context, *Order) (*Confirmation, error)
-	GetStatus(context.Context, *Order) (*Status, error)
+	GetStatus(context.Context, *CodigoSeguimiento) (*Status, error)
 	mustEmbedUnimplementedSolicitudServer()
 }
 
@@ -77,7 +77,7 @@ func (UnimplementedSolicitudServer) ShowOrder(context.Context, *Order) (*Sample,
 func (UnimplementedSolicitudServer) MakeOrder(context.Context, *Order) (*Confirmation, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MakeOrder not implemented")
 }
-func (UnimplementedSolicitudServer) GetStatus(context.Context, *Order) (*Status, error) {
+func (UnimplementedSolicitudServer) GetStatus(context.Context, *CodigoSeguimiento) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStatus not implemented")
 }
 func (UnimplementedSolicitudServer) mustEmbedUnimplementedSolicitudServer() {}
@@ -130,7 +130,7 @@ func _Solicitud_MakeOrder_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 func _Solicitud_GetStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Order)
+	in := new(CodigoSeguimiento)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -142,7 +142,7 @@ func _Solicitud_GetStatus_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/cliente.Solicitud/GetStatus",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SolicitudServer).GetStatus(ctx, req.(*Order))
+		return srv.(SolicitudServer).GetStatus(ctx, req.(*CodigoSeguimiento))
 	}
 	return interceptor(ctx, in, info, handler)
 }
