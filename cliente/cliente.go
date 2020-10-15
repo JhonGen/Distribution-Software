@@ -75,11 +75,13 @@ func main() {
 	flag.Parse()
 	fmt.Printf("tipo_cliente: %v\n", *tipoCliente)
 	conn, err := grpc.Dial("localhost:4040", grpc.WithInsecure())
-	client := protos.NewSolicitudClient(conn)
 
 	if err != nil {
 		panic(err)
 	}
+	defer conn.Close()
+	client := protos.NewSolicitudClient(conn)
+
 	if *tipoCliente != "" {
 		file, err2 := os.Open("../" + *tipoCliente + ".csv")
 		if err2 != nil {
@@ -98,6 +100,5 @@ func main() {
 		}
 	}
 
-	defer conn.Close()
 	obtenerEstado(*consulta, client)
 }
