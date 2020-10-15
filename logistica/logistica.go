@@ -67,7 +67,7 @@ func (s *LogisticaServer) MakeOrder(ctx context.Context, order *protos.Order) (*
 
 		return confirmation, nil
 	} else {
-		confirmation.ConfirmationMessage = "La orden ya esta en cola\n"
+		confirmation.ConfirmationMessage = "La orden ya esta en cola"
 		return confirmation, nil
 	}
 }
