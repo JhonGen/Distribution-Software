@@ -16,7 +16,8 @@ message Camion{
   string Tipo = 1;
   Order orden1 =2;
   Order orden2 =3;
-  int32 tiempoEspera = 4;
+  string Estado =4;
+  int32 TiempoEspera = 5;
 }
 
 message CodigoSeguimiento{
