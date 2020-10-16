@@ -17,6 +17,7 @@ type Solicitud struct {
 	Order       *protos.Order
 	Seguimiento int
 	Status      string
+	Intentos    int
 }
 
 type LogisticaServer struct {
@@ -63,6 +64,7 @@ func (s *LogisticaServer) MakeOrder(ctx context.Context, order *protos.Order) (*
 		solicitud.Order = order
 		solicitud.Status = "En bodega"
 		solicitud.Seguimiento = rand.Intn(999999999)
+		solicitud.Intentos = 0
 		if solicitud.Order.TipoCliente == "pymes" {
 			s.queuedPymes = append(s.queuedPymes, solicitud)
 		}
