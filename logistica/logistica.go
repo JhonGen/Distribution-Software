@@ -22,8 +22,9 @@ type Solicitud struct {
 
 type LogisticaServer struct {
 	protos.UnimplementedSolicitudServer
-	queuedPymes  []Solicitud
-	queuedRetail []Solicitud
+	queuedPymes        []Solicitud
+	queuedPrioritarios []Solicitud
+	queuedRetail       []Solicitud
 }
 
 func orderInSlice(a *protos.Order, list []Solicitud) bool {
@@ -33,6 +34,21 @@ func orderInSlice(a *protos.Order, list []Solicitud) bool {
 		}
 	}
 	return false
+}
+
+func sumarIntentos(a *protos.Order, list []Solicitud) {
+	solicitud := Solicitud{}
+	for _, b := range list {
+		if b.Order.Id == a.Id && a.Nombre == b.Order.Nombre {
+			solicitud = b
+			break
+		}
+	}
+	solicitud.Intentos += 1
+	list = append(list, solicitud)
+	copy(list[2:], list[1:])
+	list[1] = solicitud
+
 }
 
 func main() {
@@ -66,7 +82,12 @@ func (s *LogisticaServer) MakeOrder(ctx context.Context, order *protos.Order) (*
 		solicitud.Seguimiento = rand.Intn(999999999)
 		solicitud.Intentos = 0
 		if solicitud.Order.TipoCliente == "pymes" {
-			s.queuedPymes = append(s.queuedPymes, solicitud)
+			if solicitud.Order.Prioritario {
+				s.queuedPrioritarios = append(s.queuedPrioritarios, solicitud)
+			} else {
+				s.queuedPymes = append(s.queuedPymes, solicitud)
+			}
+
 		}
 		confirmation.ConfirmationMessage = "Orden añadida satisfactoriamente, su codigo de seguimiento es: " + strconv.Itoa(solicitud.Seguimiento)
 		if solicitud.Order.TipoCliente == "retail" {
@@ -99,7 +120,86 @@ func (s *LogisticaServer) GetStatus(ctx context.Context, numero *protos.CodigoSe
 }
 
 func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camion) (*protos.Camion, error) {
-	return nil, nil
+	i := int32(1)
+	for i <= camion.TiempoEspera {
+		if camion.Tipo == "pymes" {
+			if camion.Orden1 != nil {
+				sumarIntentos(camion.Orden1, s.queuedPymes)
+				if len(s.queuedPrioritarios) > 0 {
+					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
+				} else if len(s.queuedPymes) > 0 {
+					camion.Orden1, s.queuedPymes = s.queuedPymes[0].Order, s.queuedPymes[1:]
+
+				}
+
+			} else {
+				if len(s.queuedPrioritarios) > 0 {
+					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
+				} else if len(s.queuedPymes) > 0 {
+					camion.Orden1, s.queuedPymes = s.queuedPymes[0].Order, s.queuedPymes[1:]
+
+				}
+
+			}
+			if camion.Orden2 != nil {
+				sumarIntentos(camion.Orden2, s.queuedPymes)
+				if len(s.queuedPrioritarios) > 0 {
+					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
+				} else if len(s.queuedPymes) > 0 {
+					camion.Orden1, s.queuedPymes = s.queuedPymes[0].Order, s.queuedPymes[1:]
+
+				}
+			} else {
+				if len(s.queuedPrioritarios) > 0 {
+					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
+				} else if len(s.queuedPymes) > 0 {
+					camion.Orden1, s.queuedPymes = s.queuedPymes[0].Order, s.queuedPymes[1:]
+
+				}
+			}
+
+		}
+		if camion.Tipo == "Retail" {
+			if camion.Orden1 != nil {
+				sumarIntentos(camion.Orden1, s.queuedPymes)
+				if len(s.queuedRetail) > 0 {
+					camion.Orden1, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
+				} else if len(s.queuedPrioritarios) > 0 {
+					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
+
+				}
+
+			} else {
+				if len(s.queuedRetail) > 0 {
+					camion.Orden1, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
+				} else if len(s.queuedPrioritarios) > 0 {
+					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
+
+				}
+
+			}
+			if camion.Orden2 != nil {
+				sumarIntentos(camion.Orden1, s.queuedPymes)
+				if len(s.queuedRetail) > 0 {
+					camion.Orden2, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
+				} else if len(s.queuedPrioritarios) > 0 {
+					camion.Orden2, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
+
+				}
+
+			} else {
+				if len(s.queuedRetail) > 0 {
+					camion.Orden2, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
+				} else if len(s.queuedPrioritarios) > 0 {
+					camion.Orden2, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
+
+				}
+
+			}
+
+		}
+	}
+	return camion, nil
 
 }
 func (s *LogisticaServer) DevolverOrden(ctx context.Context, camion *protos.Camion) (*protos.Camion, error) {

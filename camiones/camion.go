@@ -23,7 +23,6 @@ func intentarEntrega(camion *protos.Camion) *protos.Camion {
 	chance2 := rand.Intn(100)
 	if chance1 >= 80 {
 		camion.Orden1 = nil
-
 	}
 	if chance2 >= 80 {
 		camion.Orden2 = nil
@@ -49,15 +48,15 @@ func main() {
 	camion.Tipo = *tipoCamion
 	camion.Estado = "En espera a recibir paquetes"
 	camion.TiempoEspera = int32(*delay)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	for true {
 
+	for true {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		camion, err2 := camionCliente.RetirarOrden(ctx, &camion)
 		if err2 != nil {
 			panic(err2)
 		}
-		camion = intentarEntrega(camion)
+		intentarEntrega(camion)
+		cancel()
 	}
 
 }
