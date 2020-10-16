@@ -97,3 +97,11 @@ func (s *LogisticaServer) GetStatus(ctx context.Context, numero *protos.CodigoSe
 	estado.State = "No existe el pedido"
 	return estado, nil
 }
+
+func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camion) (*protos.Camion, error) {
+	return nil, nil
+
+}
+func (s *LogisticaServer) DevolverOrden(ctx context.Context, camion *protos.Camion) (*protos.Camion, error) {
+	return nil, nil
+}

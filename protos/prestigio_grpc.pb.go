@@ -20,6 +20,8 @@ type SolicitudClient interface {
 	ShowOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Sample, error)
 	MakeOrder(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Confirmation, error)
 	GetStatus(ctx context.Context, in *CodigoSeguimiento, opts ...grpc.CallOption) (*Status, error)
+	RetirarOrden(ctx context.Context, in *Camion, opts ...grpc.CallOption) (*Camion, error)
+	DevolverOrden(ctx context.Context, in *Camion, opts ...grpc.CallOption) (*Camion, error)
 }
 
 type solicitudClient struct {
@@ -57,6 +59,24 @@ func (c *solicitudClient) GetStatus(ctx context.Context, in *CodigoSeguimiento, 
 	return out, nil
 }
 
+func (c *solicitudClient) RetirarOrden(ctx context.Context, in *Camion, opts ...grpc.CallOption) (*Camion, error) {
+	out := new(Camion)
+	err := c.cc.Invoke(ctx, "/cliente.Solicitud/RetirarOrden", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *solicitudClient) DevolverOrden(ctx context.Context, in *Camion, opts ...grpc.CallOption) (*Camion, error) {
+	out := new(Camion)
+	err := c.cc.Invoke(ctx, "/cliente.Solicitud/DevolverOrden", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SolicitudServer is the server API for Solicitud service.
 // All implementations must embed UnimplementedSolicitudServer
 // for forward compatibility
@@ -64,6 +84,8 @@ type SolicitudServer interface {
 	ShowOrder(context.Context, *Order) (*Sample, error)
 	MakeOrder(context.Context, *Order) (*Confirmation, error)
 	GetStatus(context.Context, *CodigoSeguimiento) (*Status, error)
+	RetirarOrden(context.Context, *Camion) (*Camion, error)
+	DevolverOrden(context.Context, *Camion) (*Camion, error)
 	mustEmbedUnimplementedSolicitudServer()
 }
 
@@ -79,6 +101,12 @@ func (UnimplementedSolicitudServer) MakeOrder(context.Context, *Order) (*Confirm
 }
 func (UnimplementedSolicitudServer) GetStatus(context.Context, *CodigoSeguimiento) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStatus not implemented")
+}
+func (UnimplementedSolicitudServer) RetirarOrden(context.Context, *Camion) (*Camion, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RetirarOrden not implemented")
+}
+func (UnimplementedSolicitudServer) DevolverOrden(context.Context, *Camion) (*Camion, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DevolverOrden not implemented")
 }
 func (UnimplementedSolicitudServer) mustEmbedUnimplementedSolicitudServer() {}
 
@@ -147,6 +175,42 @@ func _Solicitud_GetStatus_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Solicitud_RetirarOrden_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Camion)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SolicitudServer).RetirarOrden(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cliente.Solicitud/RetirarOrden",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SolicitudServer).RetirarOrden(ctx, req.(*Camion))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Solicitud_DevolverOrden_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Camion)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SolicitudServer).DevolverOrden(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cliente.Solicitud/DevolverOrden",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SolicitudServer).DevolverOrden(ctx, req.(*Camion))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Solicitud_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "cliente.Solicitud",
 	HandlerType: (*SolicitudServer)(nil),
@@ -162,6 +226,14 @@ var _Solicitud_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetStatus",
 			Handler:    _Solicitud_GetStatus_Handler,
+		},
+		{
+			MethodName: "RetirarOrden",
+			Handler:    _Solicitud_RetirarOrden_Handler,
+		},
+		{
+			MethodName: "DevolverOrden",
+			Handler:    _Solicitud_DevolverOrden_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -12,6 +12,13 @@ message Order{
   bool prioritario = 7;
 }
 
+message Camion{
+  string Tipo = 1;
+  Order orden1 =2;
+  Order orden2 =3;
+  int32 tiempoEspera = 4;
+}
+
 message CodigoSeguimiento{
   int32 codigo =1;
 }
@@ -32,4 +39,7 @@ service Solicitud {
   rpc ShowOrder(Order) returns (Sample){}
   rpc MakeOrder(Order) returns (Confirmation){}
   rpc GetStatus(CodigoSeguimiento) returns (Status){}
+  rpc RetirarOrden(Camion) returns (Camion){}
+  rpc DevolverOrden(Camion) returns (Camion){} 
 }
+
