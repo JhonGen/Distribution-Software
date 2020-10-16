@@ -208,6 +208,8 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 			}
 
 		}
+		time.Sleep(time.Second)
+		i += 1
 	}
 	if camion.Orden1 == nil && camion.Orden2 == nil {
 		fmt.Printf("No hay ordenes en cola, camion termina el servicio")
