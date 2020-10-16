@@ -11,7 +11,7 @@ import (
 	"strings"
 	"time"
 
-	protos "../clienteproto"
+	protos "../protos"
 	"google.golang.org/grpc"
 )
 

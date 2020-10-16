@@ -165,5 +165,5 @@ var _Solicitud_serviceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "cliente.proto",
+	Metadata: "prestigio.proto",
 }
