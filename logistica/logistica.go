@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net"
+	"sort"
 	"strconv"
 	"time"
 
@@ -84,15 +85,24 @@ func (s *LogisticaServer) MakeOrder(ctx context.Context, order *protos.Order) (*
 		if solicitud.Order.TipoCliente == "pymes" {
 			if solicitud.Order.Prioritario {
 				s.queuedPrioritarios = append(s.queuedPrioritarios, solicitud)
+				sort.SliceStable(s.queuedPrioritarios, func(p, q int) bool {
+					return s.queuedPrioritarios[p].Order.Valor > s.queuedPrioritarios[q].Order.Valor
+				})
 			} else {
 				s.queuedPymes = append(s.queuedPymes, solicitud)
+				sort.SliceStable(s.queuedPymes, func(p, q int) bool {
+					return s.queuedPymes[p].Order.Valor > s.queuedPymes[q].Order.Valor
+				})
 			}
 
 		}
-		confirmation.ConfirmationMessage = "Orden añadida satisfactoriamente, su codigo de seguimiento es: " + strconv.Itoa(solicitud.Seguimiento)
 		if solicitud.Order.TipoCliente == "retail" {
 			s.queuedRetail = append(s.queuedRetail, solicitud)
+			sort.SliceStable(s.queuedRetail, func(p, q int) bool {
+				return s.queuedRetail[p].Order.Valor > s.queuedRetail[q].Order.Valor
+			})
 		}
+		confirmation.ConfirmationMessage = "Orden añadida satisfactoriamente, su codigo de seguimiento es: " + strconv.Itoa(solicitud.Seguimiento)
 		return confirmation, nil
 	} else {
 		confirmation.ConfirmationMessage = "La orden ya esta en cola"
