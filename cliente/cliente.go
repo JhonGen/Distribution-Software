@@ -33,6 +33,7 @@ func ShowMakeOrder(linea string, client protos.SolicitudClient) {
 	order.Valor = int32(valorInt)
 	order.Tienda = lineaSeparada[3]
 	order.Destino = lineaSeparada[4]
+	order.TipoCliente = *tipoCliente
 	if *tipoCliente == "pymes" {
 		prioritarioBool, _ := strconv.ParseBool(lineaSeparada[5])
 		order.Prioritario = prioritarioBool

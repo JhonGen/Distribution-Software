@@ -8,7 +8,8 @@ message Order{
   int32 valor = 3;
   string tienda = 4;
   string destino = 5;
-  bool prioritario = 6;
+  string tipoCliente = 6;
+  bool prioritario = 7;
 }
 
 message CodigoSeguimiento{
@@ -29,6 +30,6 @@ message Status{
 
 service Solicitud {
   rpc ShowOrder(Order) returns (Sample){}
-  rpc MakeOrder(Order) returns (Confirmation) ; (CodigoSeguimiento){}
+  rpc MakeOrder(Order) returns (Confirmation){}
   rpc GetStatus(CodigoSeguimiento) returns (Status){}
 }
