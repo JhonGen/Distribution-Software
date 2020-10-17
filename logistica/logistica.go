@@ -173,7 +173,7 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 		if camion.Orden1 == nil && camion.Orden2 == nil {
 			fmt.Printf("No hay ordenes en cola, camion termina el servicio\n")
 		}
-		fmt.Printf("entre al for\n")
+
 		if camion.Tipo == "pymes" {
 			if camion.Orden1 != nil {
 				sumarIntentos(camion.Orden1, s.queuedPymes)
@@ -185,7 +185,7 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 				}
 
 			} else {
-				fmt.Printf("basta de hablar de huevito rey\n")
+
 				if len(s.queuedPrioritarios) > 0 {
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
 				} else if len(s.queuedPymes) > 0 {
@@ -212,7 +212,7 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 
 		}
 		if camion.Tipo == "retail" {
-			fmt.Printf("estoy en la primera wea\n")
+
 			if camion.Orden1 != nil {
 				sumarIntentos(camion.Orden1, s.queuedRetail)
 				if len(s.queuedRetail) > 0 {
@@ -223,7 +223,7 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 				}
 
 			} else {
-				fmt.Printf("estoy aca\n")
+
 				if len(s.queuedRetail) > 0 {
 					camion.Orden1, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
 				} else if len(s.queuedPrioritarios) > 0 {
@@ -244,7 +244,7 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 
 			} else {
 				if len(s.queuedRetail) > 0 {
-					fmt.Printf("estoy en la segunda wea\n")
+
 					camion.Orden2, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
 				} else if len(s.queuedPrioritarios) > 0 {
 					camion.Orden2, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
