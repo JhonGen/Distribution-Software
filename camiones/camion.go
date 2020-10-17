@@ -43,6 +43,7 @@ func intentarEntrega(camion *protos.Camion) *protos.Camion {
 	if camion.Orden1 == nil && camion.Orden2 == nil {
 		camion.Estado = "Camion en Espera"
 	}
+
 	i := 1
 	for i <= *tiempoEntrega {
 		time.Sleep(time.Second)
@@ -74,8 +75,9 @@ func main() {
 		if err2 != nil {
 			panic(err2)
 		}
+
 		fmt.Printf(camion.Estado + "\n")
-		fmt.Printf(camion.Orden1.Nombre)
+		//fmt.Printf(camion.Orden1.Nombre)
 		intentarEntrega(camion)
 		cancel()
 	}

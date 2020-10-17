@@ -139,6 +139,10 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 	fmt.Printf("%v", camion.TiempoEspera)
 	fmt.Printf(camion.Tipo + "\n")
 	for i <= camion.TiempoEspera {
+
+		if camion.Orden1 == nil && camion.Orden2 == nil {
+			fmt.Printf("No hay ordenes en cola, camion termina el servicio\n")
+		}
 		fmt.Printf("entre al for\n")
 		if camion.Tipo == "pymes" {
 			if camion.Orden1 != nil {
@@ -151,13 +155,13 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 				}
 
 			} else {
+				fmt.Printf("basta de hablar de huevito rey\n")
 				if len(s.queuedPrioritarios) > 0 {
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
 				} else if len(s.queuedPymes) > 0 {
 					camion.Orden1, s.queuedPymes = s.queuedPymes[0].Order, s.queuedPymes[1:]
 
 				}
-
 			}
 			if camion.Orden2 != nil {
 				sumarIntentos(camion.Orden2, s.queuedPymes)
@@ -223,9 +227,7 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 		time.Sleep(time.Second)
 		i += 1
 	}
-	if camion.Orden1 == nil && camion.Orden2 == nil {
-		fmt.Printf("No hay ordenes en cola, camion termina el servicio\n")
-	}
+
 	return camion, nil
 
 }
