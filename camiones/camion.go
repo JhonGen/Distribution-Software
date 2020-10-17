@@ -21,18 +21,27 @@ var (
 func intentarEntrega(camion *protos.Camion) *protos.Camion {
 	chance1 := rand.Intn(100)
 	chance2 := rand.Intn(100)
-	if chance1 <= 80 {
-		fmt.Printf("Orden " + camion.Orden1.Nombre + "Entregada exitosamente")
-		camion.Orden1 = nil
+	if camion.Orden1 != nil {
+		if chance1 <= 80 {
+			fmt.Printf("Orden " + camion.Orden1.Nombre + "Entregada exitosamente")
+			camion.Orden1 = nil
 
-	} else {
-		fmt.Printf("Orden " + camion.Orden1.Nombre + "Entrega fallida")
+		} else {
+			fmt.Printf("Orden " + camion.Orden1.Nombre + "Entrega fallida")
+			camion.Estado = "Con paquete de vuelta"
+		}
 	}
-	if chance2 <= 80 {
-		fmt.Printf("Orden " + camion.Orden2.Nombre + "Entregada exitosamente")
-		camion.Orden2 = nil
-	} else {
-		fmt.Printf("Orden " + camion.Orden2.Nombre + "Entrega fallida")
+	if camion.Orden2 != nil {
+		if chance2 <= 80 {
+			fmt.Printf("Orden " + camion.Orden2.Nombre + "Entregada exitosamente")
+			camion.Orden2 = nil
+		} else {
+			fmt.Printf("Orden " + camion.Orden2.Nombre + "Entrega fallida")
+			camion.Estado = "Con paquete de vuelta"
+		}
+	}
+	if camion.Orden1 == nil && camion.Orden2 == nil {
+		camion.Estado = "Camion en Espera"
 	}
 	i := 1
 	for i <= *tiempoEntrega {
@@ -55,6 +64,8 @@ func main() {
 	camion.Tipo = *tipoCamion
 	camion.Estado = "En espera a recibir paquetes"
 	camion.TiempoEspera = int32(*delay)
+	camion.Orden1 = nil
+	camion.Orden2 = nil
 
 	for true {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -62,6 +73,7 @@ func main() {
 		if err2 != nil {
 			panic(err2)
 		}
+		fmt.Printf(camion.Estado + "\n")
 		intentarEntrega(camion)
 		cancel()
 	}

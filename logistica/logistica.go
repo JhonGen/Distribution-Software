@@ -131,7 +131,9 @@ func (s *LogisticaServer) GetStatus(ctx context.Context, numero *protos.CodigoSe
 
 func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camion) (*protos.Camion, error) {
 	i := int32(1)
+	fmt.Printf(camion.Tipo + "\n")
 	for i <= camion.TiempoEspera {
+		fmt.Printf("entre al for\n")
 		if camion.Tipo == "pymes" {
 			if camion.Orden1 != nil {
 				sumarIntentos(camion.Orden1, s.queuedPymes)
@@ -169,9 +171,10 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 			}
 
 		}
-		if camion.Tipo == "Retail" {
+		if camion.Tipo == "retail" {
+			fmt.Printf("estoy en la primera wea")
 			if camion.Orden1 != nil {
-				sumarIntentos(camion.Orden1, s.queuedPymes)
+				sumarIntentos(camion.Orden1, s.queuedRetail)
 				if len(s.queuedRetail) > 0 {
 					camion.Orden1, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
 				} else if len(s.queuedPrioritarios) > 0 {
@@ -180,6 +183,7 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 				}
 
 			} else {
+				fmt.Printf("estoy aca")
 				if len(s.queuedRetail) > 0 {
 					camion.Orden1, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
 				} else if len(s.queuedPrioritarios) > 0 {
@@ -192,6 +196,7 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 				sumarIntentos(camion.Orden1, s.queuedPymes)
 				if len(s.queuedRetail) > 0 {
 					camion.Orden2, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
+
 				} else if len(s.queuedPrioritarios) > 0 {
 					camion.Orden2, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
 
@@ -199,6 +204,7 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 
 			} else {
 				if len(s.queuedRetail) > 0 {
+					fmt.Printf("estoy en la segunda wea")
 					camion.Orden2, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
 				} else if len(s.queuedPrioritarios) > 0 {
 					camion.Orden2, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
@@ -212,7 +218,7 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 		i += 1
 	}
 	if camion.Orden1 == nil && camion.Orden2 == nil {
-		fmt.Printf("No hay ordenes en cola, camion termina el servicio")
+		fmt.Printf("No hay ordenes en cola, camion termina el servicio\n")
 	}
 	return camion, nil
 
