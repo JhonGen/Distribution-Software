@@ -22,7 +22,7 @@ func intentarEntrega(camion *protos.Camion) *protos.Camion {
 	chance1 := rand.Intn(100)
 	chance2 := rand.Intn(100)
 	if camion.Orden1 != nil {
-		if chance1 <= 80 {
+		if chance1 <= 40 {
 			fmt.Printf("Orden " + camion.Orden1.Nombre + "Entregada exitosamente")
 			camion.Orden1 = nil
 
@@ -32,7 +32,7 @@ func intentarEntrega(camion *protos.Camion) *protos.Camion {
 		}
 	}
 	if camion.Orden2 != nil {
-		if chance2 <= 80 {
+		if chance2 <= 40 {
 			fmt.Printf("Orden " + camion.Orden2.Nombre + "Entregada exitosamente")
 			camion.Orden2 = nil
 		} else {
