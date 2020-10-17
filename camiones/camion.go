@@ -63,6 +63,7 @@ func main() {
 	camion := protos.Camion{}
 	camion.Tipo = *tipoCamion
 	camion.Estado = "En espera a recibir paquetes"
+	fmt.Printf("%v", *delay)
 	camion.TiempoEspera = int32(*delay)
 	camion.Orden1 = nil
 	camion.Orden2 = nil
@@ -74,6 +75,7 @@ func main() {
 			panic(err2)
 		}
 		fmt.Printf(camion.Estado + "\n")
+		fmt.Printf(camion.Orden1.Nombre)
 		intentarEntrega(camion)
 		cancel()
 	}
