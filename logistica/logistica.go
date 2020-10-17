@@ -28,6 +28,15 @@ type LogisticaServer struct {
 	queuedRetail       []Solicitud
 }
 
+func getIndex(cola []Solicitud, value Solicitud) int {
+	for p, v := range cola {
+		if v == value {
+			return p
+		}
+	}
+	return -1
+}
+
 func orderInSlice(a *protos.Order, list []Solicitud) bool {
 	for _, b := range list {
 		if b.Order.Id == a.Id && a.Nombre == b.Order.Nombre {
@@ -37,9 +46,11 @@ func orderInSlice(a *protos.Order, list []Solicitud) bool {
 	return false
 }
 
-func sumarIntentos(a *protos.Order, list []Solicitud) {
+func remove(slice []Solicitud, s int) []Solicitud {
+	return append(slice[:s], slice[s+1:]...)
+}
 
-	fmt.Printf("%v\n", list)
+func sumarIntentos(a *protos.Order, list []Solicitud) {
 	solicitud := Solicitud{}
 	for _, b := range list {
 		if b.Order.Id == a.Id && a.Nombre == b.Order.Nombre {
@@ -48,6 +59,11 @@ func sumarIntentos(a *protos.Order, list []Solicitud) {
 		}
 	}
 	solicitud.Intentos += 1
+	if solicitud.Intentos >= 3 {
+		index := getIndex(list, solicitud)
+		remove(list, index)
+
+	}
 	if len(list) != 0 {
 		list = append(list, solicitud)
 		copy(list[2:], list[1:])
