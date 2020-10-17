@@ -86,7 +86,7 @@ func sumarIntentos(a *protos.Order, list []Solicitud) []Solicitud {
 
 		list[1] = solicitud
 	}
-	solicitud.Intentos++
+	solicitud.Intentos += 1
 	fmt.Printf("cantidad de intentos: %v %p \n", solicitud.Intentos, &solicitud)
 	return list
 }
