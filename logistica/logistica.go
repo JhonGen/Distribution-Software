@@ -68,18 +68,18 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 
 	if a.TipoCliente == "retail" {
 		if solicitud.Intentos >= 3 {
-			index := getIndex(list, solicitud)
+			index := getIndex(reparto, solicitud)
 			if index >= 0 {
-				remove(list, index)
+				remove(reparto, index)
 				fmt.Printf("borre la wea porque el wn no pesco")
 			}
 		}
 	}
 	if a.TipoCliente == "pymes" {
 		if a.Valor <= 10*(1+int32(solicitud.Intentos)) || solicitud.Intentos >= 2 {
-			index := getIndex(list, solicitud)
+			index := getIndex(reparto, solicitud)
 			if index >= 0 {
-				remove(list, index)
+				remove(reparto, index)
 				fmt.Printf("borre la wea porque el wn no pesco")
 			}
 

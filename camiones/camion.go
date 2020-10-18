@@ -23,20 +23,20 @@ func intentarEntrega(camion *protos.Camion) *protos.Camion {
 	chance2 := rand.Intn(100)
 	if camion.Orden1 != nil {
 		if chance1 <= 10 {
-			fmt.Printf("Orden " + camion.Orden1.Nombre + "Entregada exitosamente\n")
+			fmt.Printf("Orden " + camion.Orden1.Nombre + " Entregada exitosamente\n")
 			camion.Orden1 = nil
 
 		} else {
-			fmt.Printf("Orden " + camion.Orden1.Nombre + "Entrega fallida\n")
+			fmt.Printf("Orden " + camion.Orden1.Nombre + " Entrega fallida\n")
 			camion.Estado = "Con paquete de vuelta"
 		}
 	}
 	if camion.Orden2 != nil {
 		if chance2 <= 10 {
-			fmt.Printf("Orden " + camion.Orden2.Nombre + "Entregada exitosamente\n")
+			fmt.Printf("Orden " + camion.Orden2.Nombre + " Entregada exitosamente\n")
 			camion.Orden2 = nil
 		} else {
-			fmt.Printf("Orden " + camion.Orden2.Nombre + "Entrega fallida\n")
+			fmt.Printf("Orden " + camion.Orden2.Nombre + " Entrega fallida\n")
 			camion.Estado = "Con paquete de vuelta"
 		}
 	}
@@ -63,7 +63,6 @@ func main() {
 	camion := protos.Camion{}
 	camion.Tipo = *tipoCamion
 	camion.Estado = "En espera a recibir paquetes"
-	fmt.Printf("%v", *delay)
 	camion.TiempoEspera = int32(*delay)
 	camion.Orden1 = nil
 	camion.Orden2 = nil
