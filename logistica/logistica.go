@@ -190,27 +190,8 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 
 				}
 
-			} else {
-
-				if len(s.queuedPrioritarios) > 0 {
-					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
-					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
-				} else if len(s.queuedPymes) > 0 {
-					s.queuedReparto = append(s.queuedReparto, s.queuedPymes[0])
-					camion.Orden1, s.queuedPymes = s.queuedPymes[0].Order, s.queuedPymes[1:]
-
-				}
 			}
 			if camion.Orden2 == nil {
-				if len(s.queuedPrioritarios) > 0 {
-					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
-					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
-				} else if len(s.queuedPymes) > 0 {
-					s.queuedReparto = append(s.queuedReparto, s.queuedPymes[0])
-					camion.Orden1, s.queuedPymes = s.queuedPymes[0].Order, s.queuedPymes[1:]
-
-				}
-			} else {
 				if len(s.queuedPrioritarios) > 0 {
 					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
@@ -235,28 +216,24 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 				}
 
 			}
+			if camion.Orden2 == nil {
+				s.queuedRetail, s.queuedReparto = sumarIntentos(camion.Orden1, s.queuedRetail, s.queuedReparto)
+				if len(s.queuedRetail) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedRetail[0])
+					camion.Orden2, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
 
-		}
-		if camion.Orden2 == nil {
-			s.queuedRetail, s.queuedReparto = sumarIntentos(camion.Orden1, s.queuedRetail, s.queuedReparto)
-			if len(s.queuedRetail) > 0 {
-				s.queuedReparto = append(s.queuedReparto, s.queuedRetail[0])
-				camion.Orden2, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
-
-			} else if len(s.queuedPrioritarios) > 0 {
-				s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
-				camion.Orden2, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
-
+				}
 			}
-
 		}
-
 		time.Sleep(time.Second)
 		if camion.Orden1 == nil && camion.Orden2 == nil {
 			fmt.Printf("No hay ordenes en cola, esperando un paquete, intentos: %v\n", i)
 		}
 		i += 1
 	}
+	fmt.Printf("Orden creada con exito:\n")
+	fmt.Printf("Orden nro 1: %v\n", camion.Orden1)
+	fmt.Printf("Orden nro 2: %v\n", camion.Orden2)
 
 	return camion, nil
 }
