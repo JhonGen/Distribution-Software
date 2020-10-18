@@ -11,6 +11,7 @@ import (
 	"time"
 
 	protos "../protos"
+	"github.com/streadway/amqp"
 	"google.golang.org/grpc"
 )
 
@@ -53,8 +54,7 @@ func remove(slice []Solicitud, s int) []Solicitud {
 }
 
 func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]Solicitud, []Solicitud) {
-	var inReparto = 0
-	var inList = 0
+
 	solicitud := Solicitud{}
 	for i, b := range reparto {
 		if b.Order.Id == a.Id && a.Nombre == b.Order.Nombre {
@@ -64,32 +64,27 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 			solicitud.Intentos = reparto[i].Intentos
 			solicitud.Seguimiento = reparto[i].Seguimiento
 			solicitud.Status = reparto[i].Status
-			inReparto = i
+			//inReparto = i
 			break
-		}
-	}
-	for i, c := range list {
-		if c.Order.Id == a.Id && a.Nombre == c.Order.Nombre {
-			inList = i
 		}
 	}
 
 	if a.TipoCliente == "retail" {
 
 		if solicitud.Intentos >= 3 {
-			/*
-				inList = getIndex(list, solicitud)
-				list = remove(list, inList)
-				reparto = remove(reparto, inReparto)
-			*/
 
-			//index := getIndex(reparto, solicitud)
-			//index2 := getIndex(list, solicitud)
-			fmt.Printf("indice a borrar de reparto = %v   indice a borrar lista = %v\n", inReparto, inList)
-			if inReparto >= 0 {
-				fmt.Printf("Se intenta borrar\n")
-				reparto = remove(reparto, inReparto)
-				list = remove(list, inList)
+		} else if solicitud.Intentos < 3 {
+			if len(list) > 1 {
+
+				list = append(list, solicitud)
+				copy(list[2:], list[1:])
+
+				list[1] = solicitud
+				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Intentos)
+				return list, reparto
+			} else if len(list) <= 1 {
+				list = append(list, solicitud)
+				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Intentos)
 				return list, reparto
 
 			}
@@ -98,41 +93,23 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 	}
 	if a.TipoCliente == "pymes" {
 		if a.Valor <= 10*(1+int32(solicitud.Intentos)) || solicitud.Intentos >= 2 {
-			/*
-				index := getIndex(reparto, solicitud)
-				index2 := getIndex(list, solicitud)
-				if index >= 0 {
-					reparto = remove(reparto, index)
-					list = remove(list, index2)
-					//fmt.Printf("borre la wea porque el wn no pesco")
-					return list, reparto
+		} else {
+			if len(list) > 1 {
 
-				}*/
-			/*
-				if inReparto >= 0 {
-					fmt.Printf("Se intenta borrar\n")
-					reparto = remove(reparto, inReparto)
-					list = remove(list, inList)
-					return list, reparto
+				list = append(list, solicitud)
+				copy(list[2:], list[1:])
 
-				}
-			*/
+				list[1] = solicitud
+				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Intentos)
+				return list, reparto
 
+			} else if len(list) <= 1 {
+				list = append(list, solicitud)
+				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Intentos)
+				return list, reparto
+
+			}
 		}
-	}
-
-	if len(list) > 1 {
-
-		list = append(list, solicitud)
-		copy(list[2:], list[1:])
-
-		list[1] = solicitud
-		fmt.Printf("cantidad de intentos: %v  \n", solicitud.Intentos)
-
-	} else if len(list) <= 1 {
-		list = append(list, solicitud)
-		fmt.Printf("cantidad de intentos: %v  \n", solicitud.Intentos)
-
 	}
 
 	return list, reparto
@@ -149,12 +126,33 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	//conn, err := amqp.Dial("amqp://guest:guest@localhost:4141/")
-	//failOnError(err, "Failed to connect to RabbitMQ")
-	//defer conn.Close()
-	//ch, err := conn.Channel()
-	//failOnError(err, "Failed to open a channel")
-	//defer ch.Close()
+	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	failOnError(err, "Failed to connect to RabbitMQ")
+	defer conn.Close()
+	ch, err := conn.Channel()
+	failOnError(err, "Failed to open a channel")
+	defer ch.Close()
+	q, err := ch.QueueDeclare(
+		"Finanzas", // name
+		false,      // durable
+		false,      // delete when unused
+		false,      // exclusive
+		false,      // no-wait
+		nil,        // arguments
+	)
+	fmt.Println(q)
+	err = ch.Publish(
+		"",
+		"Finanzas",
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte("chupame el pene"),
+		},
+	)
+
+	failOnError(err, "fallo el publish ctm")
 	var opts []grpc.ServerOption
 	grpcServer := grpc.NewServer(opts...)
 	protos.RegisterSolicitudServer(grpcServer, &LogisticaServer{})
