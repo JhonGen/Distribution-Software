@@ -78,7 +78,7 @@ func main() {
 
 		fmt.Printf(camion.Estado + "\n")
 		//fmt.Printf(camion.Orden1.Nombre)
-		intentarEntrega(camion)
+		camion = intentarEntrega(camion)
 		cancel()
 	}
 
