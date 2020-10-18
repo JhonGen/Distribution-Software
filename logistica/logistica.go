@@ -51,13 +51,17 @@ func remove(slice []Solicitud, s int) []Solicitud {
 	return append(slice[:s], slice[s+1:]...)
 }
 
-func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) []Solicitud {
-	fmt.Printf("trate de encolar la fallida\n")
+func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]Solicitud, []Solicitud) {
+
 	solicitud := Solicitud{}
-	for _, b := range reparto {
+	for i, b := range reparto {
 		if b.Order.Id == a.Id && a.Nombre == b.Order.Nombre {
-			solicitud = b
-			solicitud.Intentos += 1
+			fmt.Printf("nombre del fallo= %v\n", b.Order.Nombre)
+			reparto[i].Intentos += 1
+			solicitud.Order = reparto[i].Order
+			solicitud.Intentos = reparto[i].Intentos
+			solicitud.Seguimiento = reparto[i].Seguimiento
+			solicitud.Status = reparto[i].Status
 			break
 		}
 	}
@@ -83,7 +87,7 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) []Sol
 	}
 
 	if len(list) > 1 {
-		fmt.Printf("trate de encolar la fallida\n")
+
 		list = append(list, solicitud)
 		copy(list[2:], list[1:])
 
@@ -92,7 +96,7 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) []Sol
 		list = append(list, solicitud)
 	}
 	fmt.Printf("cantidad de intentos: %v %p \n", solicitud.Intentos, &solicitud)
-	return list
+	return list, reparto
 }
 
 func main() {
@@ -174,17 +178,26 @@ func (s *LogisticaServer) GetStatus(ctx context.Context, numero *protos.CodigoSe
 
 func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camion) (*protos.Camion, error) {
 	i := int32(1)
-	fmt.Printf("%v", camion.TiempoEspera)
-	fmt.Printf(camion.Tipo + "\n")
-	for i <= camion.TiempoEspera {
-
-		if camion.Orden1 == nil && camion.Orden2 == nil {
-			fmt.Printf("No hay ordenes en cola, camion termina el servicio\n")
+	if camion.Orden1 != nil {
+		fmt.Printf("el pedido %v falló", camion.Orden1.Nombre)
+		if camion.Tipo == "pymes" {
+			s.queuedPymes, s.queuedReparto = sumarIntentos(camion.Orden1, s.queuedPymes, s.queuedReparto)
+		} else if camion.Tipo == "retail" {
+			s.queuedRetail, s.queuedReparto = sumarIntentos(camion.Orden1, s.queuedRetail, s.queuedReparto)
 		}
+	}
+	if camion.Orden2 != nil {
+		fmt.Printf("el pedido %v falló", camion.Orden2.Nombre)
+		if camion.Tipo == "pymes" {
+			s.queuedPymes, s.queuedReparto = sumarIntentos(camion.Orden2, s.queuedPymes, s.queuedReparto)
+		} else if camion.Tipo == "retail" {
+			s.queuedRetail, s.queuedReparto = sumarIntentos(camion.Orden2, s.queuedRetail, s.queuedReparto)
+		}
+	}
+	for i <= camion.TiempoEspera {
 
 		if camion.Tipo == "pymes" {
 			if camion.Orden1 != nil {
-				s.queuedPymes = sumarIntentos(camion.Orden1, s.queuedPymes, s.queuedReparto)
 				if len(s.queuedPrioritarios) > 0 {
 					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
@@ -206,7 +219,6 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 				}
 			}
 			if camion.Orden2 != nil {
-				s.queuedPymes = sumarIntentos(camion.Orden2, s.queuedPymes, s.queuedReparto)
 				if len(s.queuedPrioritarios) > 0 {
 					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
@@ -230,7 +242,6 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 		if camion.Tipo == "retail" {
 
 			if camion.Orden1 != nil {
-				s.queuedRetail = sumarIntentos(camion.Orden1, s.queuedRetail, s.queuedReparto)
 				if len(s.queuedRetail) > 0 {
 					s.queuedReparto = append(s.queuedReparto, s.queuedRetail[0])
 					camion.Orden1, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
@@ -253,7 +264,7 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 
 			}
 			if camion.Orden2 != nil {
-				s.queuedRetail = sumarIntentos(camion.Orden1, s.queuedRetail, s.queuedReparto)
+				s.queuedRetail, s.queuedReparto = sumarIntentos(camion.Orden1, s.queuedRetail, s.queuedReparto)
 				if len(s.queuedRetail) > 0 {
 					s.queuedReparto = append(s.queuedReparto, s.queuedRetail[0])
 					camion.Orden2, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
@@ -278,7 +289,10 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 
 		}
 		time.Sleep(time.Second)
-		i++
+		if camion.Orden1 == nil && camion.Orden2 == nil {
+			fmt.Printf("No hay ordenes en cola, esperando un paquete, intentos: %v\n", i)
+		}
+		i += 1
 	}
 
 	return camion, nil
