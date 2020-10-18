@@ -15,7 +15,7 @@ var (
 	tipoCamion    = flag.String("tipo_camion", "", "tipo de camion que se desea implementar")
 	tiempoEntrega = flag.Int("tiempo_entrega", 0, "tiempo que tarda en realizar una entrega")
 	delay         = flag.Int("delay", 0, "tiempo de espera de solicitud de un camion")
-	nro_camion    = flag.Int("nro_camion", 0, "camion a escojer")
+	nro_camion    = flag.String("nro_camion", "", "camion a escojer")
 )
 
 func intentarEntrega(camion *protos.Camion) *protos.Camion {

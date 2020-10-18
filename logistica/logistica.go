@@ -20,7 +20,6 @@ type Solicitud struct {
 	Order       *protos.Order
 	Seguimiento int
 	Status      string
-	Intentos    int
 }
 
 type LogisticaServer struct {
@@ -29,6 +28,7 @@ type LogisticaServer struct {
 	queuedPrioritarios []Solicitud
 	queuedRetail       []Solicitud
 	queuedReparto      []Solicitud
+	queuedBalance      []Solicitud
 }
 
 func getIndex(cola []Solicitud, value Solicitud) int {
@@ -59,9 +59,8 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 	for i, b := range reparto {
 		if b.Order.Id == a.Id && a.Nombre == b.Order.Nombre {
 			fmt.Printf("nombre del fallo= %v\n", b.Order.Nombre)
-			reparto[i].Intentos += 1
+			reparto[i].Order.Intentos += 1
 			solicitud.Order = reparto[i].Order
-			solicitud.Intentos = reparto[i].Intentos
 			solicitud.Seguimiento = reparto[i].Seguimiento
 			solicitud.Status = reparto[i].Status
 			//inReparto = i
@@ -71,20 +70,20 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 
 	if a.TipoCliente == "retail" {
 
-		if solicitud.Intentos >= 3 {
+		if solicitud.Order.Intentos >= 3 {
 
-		} else if solicitud.Intentos < 3 {
+		} else if solicitud.Order.Intentos < 3 {
 			if len(list) > 1 {
 
 				list = append(list, solicitud)
 				copy(list[2:], list[1:])
 
 				list[1] = solicitud
-				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Intentos)
+				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
 				return list, reparto
 			} else if len(list) <= 1 {
 				list = append(list, solicitud)
-				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Intentos)
+				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
 				return list, reparto
 
 			}
@@ -92,7 +91,7 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 		}
 	}
 	if a.TipoCliente == "pymes" {
-		if a.Valor <= 10*(1+int32(solicitud.Intentos)) || solicitud.Intentos >= 2 {
+		if a.Valor <= 10*(1+int32(solicitud.Order.Intentos)) || solicitud.Order.Intentos >= 2 {
 		} else {
 			if len(list) > 1 {
 
@@ -100,12 +99,12 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 				copy(list[2:], list[1:])
 
 				list[1] = solicitud
-				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Intentos)
+				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
 				return list, reparto
 
 			} else if len(list) <= 1 {
 				list = append(list, solicitud)
-				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Intentos)
+				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
 				return list, reparto
 
 			}
@@ -113,6 +112,10 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 	}
 
 	return list, reparto
+}
+
+func ReportarFinanzas(solicitud Solicitud) {
+
 }
 
 func failOnError(err error, msg string) {
@@ -177,7 +180,6 @@ func (s *LogisticaServer) MakeOrder(ctx context.Context, order *protos.Order) (*
 		solicitud.Order = order
 		solicitud.Status = "En bodega"
 		solicitud.Seguimiento = rand.Intn(999999999)
-		solicitud.Intentos = 0
 		if solicitud.Order.TipoCliente == "pymes" {
 			if solicitud.Order.Prioritario {
 				s.queuedPrioritarios = append(s.queuedPrioritarios, solicitud)
@@ -243,10 +245,10 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 			if camion.Orden2 == nil {
 				if len(s.queuedPrioritarios) > 0 {
 					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
-					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
+					camion.Orden2, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
 				} else if len(s.queuedPymes) > 0 {
 					s.queuedReparto = append(s.queuedReparto, s.queuedPymes[0])
-					camion.Orden1, s.queuedPymes = s.queuedPymes[0].Order, s.queuedPymes[1:]
+					camion.Orden2, s.queuedPymes = s.queuedPymes[0].Order, s.queuedPymes[1:]
 
 				}
 			}
@@ -307,4 +309,33 @@ func (s *LogisticaServer) DevolverOrden(ctx context.Context, camion *protos.Cami
 	camion.Orden1 = nil
 	camion.Orden2 = nil
 	return camion, nil
+}
+
+func (s *LogisticaServer) ReporteEntrega(ctx context.Context, orden *protos.Order) (*protos.Confirmation, error) {
+	solicitud := Solicitud{}
+	confirmation := &protos.Confirmation{}
+	solicitud.Order = orden
+	if orden.Apruebo {
+		solicitud.Status = "Entregado"
+		s.queuedBalance = append(s.queuedBalance, solicitud)
+		confirmation.ConfirmationMessage = "Orden enviada a balance"
+		return confirmation, nil
+	} else {
+		if orden.TipoCliente == "retail" {
+			if orden.Intentos >= 3 {
+				solicitud.Status = "No Entregado"
+				confirmation.ConfirmationMessage = "Orden enviada a balance"
+				s.queuedBalance = append(s.queuedBalance, solicitud)
+			}
+		} else if orden.TipoCliente == "pymes" {
+			if orden.Valor >= 10*(orden.Intentos) || orden.Intentos >= 2 {
+				solicitud.Status = "No Entregado"
+				confirmation.ConfirmationMessage = "Orden enviada a balance"
+				s.queuedBalance = append(s.queuedBalance, solicitud)
+
+			}
+		}
+	}
+	confirmation.ConfirmationMessage = "Orden se devolvera a la cola"
+	return confirmation, nil
 }

@@ -34,6 +34,8 @@ func ShowMakeOrder(linea string, client protos.SolicitudClient) {
 	order.Tienda = lineaSeparada[3]
 	order.Destino = lineaSeparada[4]
 	order.TipoCliente = *tipoCliente
+	order.Intentos = 0
+	order.Apruebo = false
 	if *tipoCliente == "pymes" {
 		prioritarioBool, _ := strconv.ParseBool(lineaSeparada[5])
 		order.Prioritario = prioritarioBool
@@ -91,8 +93,12 @@ func main() {
 		defer file.Close()
 
 		scanner := bufio.NewScanner(file)
+		var i = 0
 		for scanner.Scan() {
-			ShowMakeOrder(scanner.Text(), client)
+			if i != 0 {
+				ShowMakeOrder(scanner.Text(), client)
+			}
+			i += 1
 
 		}
 

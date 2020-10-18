@@ -10,6 +10,8 @@ message Order{
   string destino = 5;
   string tipoCliente = 6;
   bool prioritario = 7;
+  bool apruebo = 8;
+  int32 Intentos = 9;
 }
 
 message Camion{
@@ -42,5 +44,6 @@ service Solicitud {
   rpc GetStatus(CodigoSeguimiento) returns (Status){}
   rpc RetirarOrden(Camion) returns (Camion){}
   rpc DevolverOrden(Camion) returns (Camion){} 
+  rpc ReporteEntrega(Order) returns (Confirmation) {}
 }
 
