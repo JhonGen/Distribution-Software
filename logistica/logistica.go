@@ -178,26 +178,9 @@ func (s *LogisticaServer) GetStatus(ctx context.Context, numero *protos.CodigoSe
 
 func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camion) (*protos.Camion, error) {
 	i := int32(1)
-	if camion.Orden1 != nil {
-		fmt.Printf("el pedido %v falló", camion.Orden1.Nombre)
-		if camion.Tipo == "pymes" {
-			s.queuedPymes, s.queuedReparto = sumarIntentos(camion.Orden1, s.queuedPymes, s.queuedReparto)
-		} else if camion.Tipo == "retail" {
-			s.queuedRetail, s.queuedReparto = sumarIntentos(camion.Orden1, s.queuedRetail, s.queuedReparto)
-		}
-	}
-	if camion.Orden2 != nil {
-		fmt.Printf("el pedido %v falló", camion.Orden2.Nombre)
-		if camion.Tipo == "pymes" {
-			s.queuedPymes, s.queuedReparto = sumarIntentos(camion.Orden2, s.queuedPymes, s.queuedReparto)
-		} else if camion.Tipo == "retail" {
-			s.queuedRetail, s.queuedReparto = sumarIntentos(camion.Orden2, s.queuedRetail, s.queuedReparto)
-		}
-	}
 	for i <= camion.TiempoEspera {
-
 		if camion.Tipo == "pymes" {
-			if camion.Orden1 != nil {
+			if camion.Orden1 == nil {
 				if len(s.queuedPrioritarios) > 0 {
 					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
@@ -218,7 +201,7 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 
 				}
 			}
-			if camion.Orden2 != nil {
+			if camion.Orden2 == nil {
 				if len(s.queuedPrioritarios) > 0 {
 					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
@@ -241,53 +224,33 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 		}
 		if camion.Tipo == "retail" {
 
-			if camion.Orden1 != nil {
+			if camion.Orden1 == nil {
 				if len(s.queuedRetail) > 0 {
 					s.queuedReparto = append(s.queuedReparto, s.queuedRetail[0])
 					camion.Orden1, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
 				} else if len(s.queuedPrioritarios) > 0 {
 					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
-
-				}
-
-			} else {
-
-				if len(s.queuedRetail) > 0 {
-					s.queuedReparto = append(s.queuedReparto, s.queuedRetail[0])
-					camion.Orden1, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
-				} else if len(s.queuedPrioritarios) > 0 {
-					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
-					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
-
-				}
-
-			}
-			if camion.Orden2 != nil {
-				s.queuedRetail, s.queuedReparto = sumarIntentos(camion.Orden1, s.queuedRetail, s.queuedReparto)
-				if len(s.queuedRetail) > 0 {
-					s.queuedReparto = append(s.queuedReparto, s.queuedRetail[0])
-					camion.Orden2, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
-
-				} else if len(s.queuedPrioritarios) > 0 {
-					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
-					camion.Orden2, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
-
-				}
-
-			} else {
-				if len(s.queuedRetail) > 0 {
-					s.queuedReparto = append(s.queuedReparto, s.queuedRetail[0])
-					camion.Orden2, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
-				} else if len(s.queuedPrioritarios) > 0 {
-					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
-					camion.Orden2, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
 
 				}
 
 			}
 
 		}
+		if camion.Orden2 == nil {
+			s.queuedRetail, s.queuedReparto = sumarIntentos(camion.Orden1, s.queuedRetail, s.queuedReparto)
+			if len(s.queuedRetail) > 0 {
+				s.queuedReparto = append(s.queuedReparto, s.queuedRetail[0])
+				camion.Orden2, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
+
+			} else if len(s.queuedPrioritarios) > 0 {
+				s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
+				camion.Orden2, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
+
+			}
+
+		}
+
 		time.Sleep(time.Second)
 		if camion.Orden1 == nil && camion.Orden2 == nil {
 			fmt.Printf("No hay ordenes en cola, esperando un paquete, intentos: %v\n", i)
@@ -296,8 +259,26 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 	}
 
 	return camion, nil
-
 }
+
 func (s *LogisticaServer) DevolverOrden(ctx context.Context, camion *protos.Camion) (*protos.Camion, error) {
-	return nil, nil
+	if camion.Orden1 != nil {
+		fmt.Printf("el pedido %v falló", camion.Orden1.Nombre)
+		if camion.Tipo == "pymes" {
+			s.queuedPymes, s.queuedReparto = sumarIntentos(camion.Orden1, s.queuedPymes, s.queuedReparto)
+		} else if camion.Tipo == "retail" {
+			s.queuedRetail, s.queuedReparto = sumarIntentos(camion.Orden1, s.queuedRetail, s.queuedReparto)
+		}
+	}
+	if camion.Orden2 != nil {
+		fmt.Printf("el pedido %v falló", camion.Orden2.Nombre)
+		if camion.Tipo == "pymes" {
+			s.queuedPymes, s.queuedReparto = sumarIntentos(camion.Orden2, s.queuedPymes, s.queuedReparto)
+		} else if camion.Tipo == "retail" {
+			s.queuedRetail, s.queuedReparto = sumarIntentos(camion.Orden2, s.queuedRetail, s.queuedReparto)
+		}
+	}
+	camion.Orden1 = nil
+	camion.Orden2 = nil
+	return camion, nil
 }

@@ -40,14 +40,13 @@ func intentarEntrega(camion *protos.Camion) *protos.Camion {
 			camion.Estado = "Con paquete de vuelta"
 		}
 	}
-	if camion.Orden1 == nil && camion.Orden2 == nil {
-		camion.Estado = "Camion en Espera"
-	}
-
 	i := 1
 	for i <= *tiempoEntrega {
 		time.Sleep(time.Second)
 		i += 1
+	}
+	if camion.Orden1 == nil && camion.Orden2 == nil {
+		camion.Estado = "Camion en Espera"
 	}
 	return camion
 }
@@ -77,8 +76,12 @@ func main() {
 		}
 
 		fmt.Printf(camion.Estado + "\n")
-		//fmt.Printf(camion.Orden1.Nombre)
 		camion = intentarEntrega(camion)
+		camion, err3 := camionCliente.DevolverOrden(ctx, camion)
+		if err3 != nil {
+			panic(err3)
+		}
+
 		cancel()
 	}
 
