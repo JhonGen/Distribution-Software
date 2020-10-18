@@ -26,6 +26,7 @@ type LogisticaServer struct {
 	queuedPymes        []Solicitud
 	queuedPrioritarios []Solicitud
 	queuedRetail       []Solicitud
+	queuedReparto      []Solicitud
 }
 
 func getIndex(cola []Solicitud, value Solicitud) int {
@@ -50,17 +51,18 @@ func remove(slice []Solicitud, s int) []Solicitud {
 	return append(slice[:s], slice[s+1:]...)
 }
 
-func sumarIntentos(a *protos.Order, list []Solicitud) []Solicitud {
+func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) []Solicitud {
 	fmt.Printf("trate de encolar la fallida\n")
 	solicitud := Solicitud{}
-	for _, b := range list {
+	for _, b := range reparto {
 		if b.Order.Id == a.Id && a.Nombre == b.Order.Nombre {
+			b.Intentos += 1
 			solicitud = b
 			break
 		}
 	}
 
-	if a.TipoCliente == "retail" && len(list) > 0 {
+	if a.TipoCliente == "retail" {
 		if solicitud.Intentos >= 3 {
 			index := getIndex(list, solicitud)
 			if index >= 0 {
@@ -69,7 +71,7 @@ func sumarIntentos(a *protos.Order, list []Solicitud) []Solicitud {
 			}
 		}
 	}
-	if a.TipoCliente == "pymes" && len(list) > 0 {
+	if a.TipoCliente == "pymes" {
 		if a.Valor <= 10*(1+int32(solicitud.Intentos)) || solicitud.Intentos >= 2 {
 			index := getIndex(list, solicitud)
 			if index >= 0 {
@@ -79,14 +81,16 @@ func sumarIntentos(a *protos.Order, list []Solicitud) []Solicitud {
 
 		}
 	}
+
 	if len(list) > 1 {
 		fmt.Printf("trate de encolar la fallida\n")
 		list = append(list, solicitud)
 		copy(list[2:], list[1:])
 
 		list[1] = solicitud
+	} else if len(list) <= 1 {
+		list = append(list, solicitud)
 	}
-	solicitud.Intentos += 1
 	fmt.Printf("cantidad de intentos: %v %p \n", solicitud.Intentos, &solicitud)
 	return list
 }
@@ -180,10 +184,12 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 
 		if camion.Tipo == "pymes" {
 			if camion.Orden1 != nil {
-				s.queuedPymes = sumarIntentos(camion.Orden1, s.queuedPymes)
+				s.queuedPymes = sumarIntentos(camion.Orden1, s.queuedPymes, s.queuedReparto)
 				if len(s.queuedPrioritarios) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
 				} else if len(s.queuedPymes) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedPymes[0])
 					camion.Orden1, s.queuedPymes = s.queuedPymes[0].Order, s.queuedPymes[1:]
 
 				}
@@ -191,24 +197,30 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 			} else {
 
 				if len(s.queuedPrioritarios) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
 				} else if len(s.queuedPymes) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedPymes[0])
 					camion.Orden1, s.queuedPymes = s.queuedPymes[0].Order, s.queuedPymes[1:]
 
 				}
 			}
 			if camion.Orden2 != nil {
-				s.queuedPymes = sumarIntentos(camion.Orden2, s.queuedPymes)
+				s.queuedPymes = sumarIntentos(camion.Orden2, s.queuedPymes, s.queuedReparto)
 				if len(s.queuedPrioritarios) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
 				} else if len(s.queuedPymes) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedPymes[0])
 					camion.Orden1, s.queuedPymes = s.queuedPymes[0].Order, s.queuedPymes[1:]
 
 				}
 			} else {
 				if len(s.queuedPrioritarios) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
 				} else if len(s.queuedPymes) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedPymes[0])
 					camion.Orden1, s.queuedPymes = s.queuedPymes[0].Order, s.queuedPymes[1:]
 
 				}
@@ -218,10 +230,12 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 		if camion.Tipo == "retail" {
 
 			if camion.Orden1 != nil {
-				s.queuedRetail = sumarIntentos(camion.Orden1, s.queuedRetail)
+				s.queuedRetail = sumarIntentos(camion.Orden1, s.queuedRetail, s.queuedReparto)
 				if len(s.queuedRetail) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedRetail[0])
 					camion.Orden1, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
 				} else if len(s.queuedPrioritarios) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
 
 				}
@@ -229,28 +243,33 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 			} else {
 
 				if len(s.queuedRetail) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedRetail[0])
 					camion.Orden1, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
 				} else if len(s.queuedPrioritarios) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden1, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
 
 				}
 
 			}
 			if camion.Orden2 != nil {
-				s.queuedRetail = sumarIntentos(camion.Orden1, s.queuedRetail)
+				s.queuedRetail = sumarIntentos(camion.Orden1, s.queuedRetail, s.queuedReparto)
 				if len(s.queuedRetail) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedRetail[0])
 					camion.Orden2, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
 
 				} else if len(s.queuedPrioritarios) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden2, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
 
 				}
 
 			} else {
 				if len(s.queuedRetail) > 0 {
-
+					s.queuedReparto = append(s.queuedReparto, s.queuedRetail[0])
 					camion.Orden2, s.queuedRetail = s.queuedRetail[0].Order, s.queuedRetail[1:]
 				} else if len(s.queuedPrioritarios) > 0 {
+					s.queuedReparto = append(s.queuedReparto, s.queuedPrioritarios[0])
 					camion.Orden2, s.queuedPrioritarios = s.queuedPrioritarios[0].Order, s.queuedPrioritarios[1:]
 
 				}
