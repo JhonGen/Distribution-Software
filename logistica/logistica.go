@@ -56,8 +56,8 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) []Sol
 	solicitud := Solicitud{}
 	for _, b := range reparto {
 		if b.Order.Id == a.Id && a.Nombre == b.Order.Nombre {
-			b.Intentos += 1
 			solicitud = b
+			solicitud.Intentos += 1
 			break
 		}
 	}
