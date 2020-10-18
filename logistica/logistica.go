@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"math/rand"
 	"net"
 	"sort"
@@ -52,7 +53,8 @@ func remove(slice []Solicitud, s int) []Solicitud {
 }
 
 func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]Solicitud, []Solicitud) {
-
+	var inReparto = 0
+	var inList = 0
 	solicitud := Solicitud{}
 	for i, b := range reparto {
 		if b.Order.Id == a.Id && a.Nombre == b.Order.Nombre {
@@ -62,26 +64,59 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 			solicitud.Intentos = reparto[i].Intentos
 			solicitud.Seguimiento = reparto[i].Seguimiento
 			solicitud.Status = reparto[i].Status
+			inReparto = i
 			break
+		}
+	}
+	for i, c := range list {
+		if c.Order.Id == a.Id && a.Nombre == c.Order.Nombre {
+			inList = i
 		}
 	}
 
 	if a.TipoCliente == "retail" {
+
 		if solicitud.Intentos >= 3 {
-			index := getIndex(reparto, solicitud)
-			if index >= 0 {
-				remove(reparto, index)
-				fmt.Printf("borre la wea porque el wn no pesco")
+			/*
+				inList = getIndex(list, solicitud)
+				list = remove(list, inList)
+				reparto = remove(reparto, inReparto)
+			*/
+
+			//index := getIndex(reparto, solicitud)
+			//index2 := getIndex(list, solicitud)
+			fmt.Printf("indice a borrar de reparto = %v   indice a borrar lista = %v\n", inReparto, inList)
+			if inReparto >= 0 {
+				fmt.Printf("Se intenta borrar\n")
+				reparto = remove(reparto, inReparto)
+				list = remove(list, inList)
+				return list, reparto
+
 			}
+
 		}
 	}
 	if a.TipoCliente == "pymes" {
 		if a.Valor <= 10*(1+int32(solicitud.Intentos)) || solicitud.Intentos >= 2 {
-			index := getIndex(reparto, solicitud)
-			if index >= 0 {
-				remove(reparto, index)
-				fmt.Printf("borre la wea porque el wn no pesco")
-			}
+			/*
+				index := getIndex(reparto, solicitud)
+				index2 := getIndex(list, solicitud)
+				if index >= 0 {
+					reparto = remove(reparto, index)
+					list = remove(list, index2)
+					//fmt.Printf("borre la wea porque el wn no pesco")
+					return list, reparto
+
+				}*/
+			/*
+				if inReparto >= 0 {
+					fmt.Printf("Se intenta borrar\n")
+					reparto = remove(reparto, inReparto)
+					list = remove(list, inList)
+					return list, reparto
+
+				}
+			*/
 
 		}
 	}
@@ -92,11 +127,21 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 		copy(list[2:], list[1:])
 
 		list[1] = solicitud
+		fmt.Printf("cantidad de intentos: %v  \n", solicitud.Intentos)
+
 	} else if len(list) <= 1 {
 		list = append(list, solicitud)
+		fmt.Printf("cantidad de intentos: %v  \n", solicitud.Intentos)
+
 	}
-	fmt.Printf("cantidad de intentos: %v %p \n", solicitud.Intentos, &solicitud)
+
 	return list, reparto
+}
+
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
+	}
 }
 
 func main() {
@@ -104,6 +149,12 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	//conn, err := amqp.Dial("amqp://guest:guest@localhost:4141/")
+	//failOnError(err, "Failed to connect to RabbitMQ")
+	//defer conn.Close()
+	//ch, err := conn.Channel()
+	//failOnError(err, "Failed to open a channel")
+	//defer ch.Close()
 	var opts []grpc.ServerOption
 	grpcServer := grpc.NewServer(opts...)
 	protos.RegisterSolicitudServer(grpcServer, &LogisticaServer{})
@@ -121,7 +172,7 @@ func (s *LogisticaServer) ShowOrder(ctx context.Context, order *protos.Order) (*
 
 func (s *LogisticaServer) MakeOrder(ctx context.Context, order *protos.Order) (*protos.Confirmation, error) {
 	confirmation := &protos.Confirmation{}
-	if !orderInSlice(order, s.queuedPymes) && !orderInSlice(order, s.queuedRetail) {
+	if !orderInSlice(order, s.queuedPymes) && !orderInSlice(order, s.queuedRetail) && !orderInSlice(order, s.queuedPrioritarios) {
 		solicitud := Solicitud{}
 		t := time.Now()
 		solicitud.Time = t
