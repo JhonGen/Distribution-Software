@@ -22,6 +22,7 @@ type SolicitudClient interface {
 	GetStatus(ctx context.Context, in *CodigoSeguimiento, opts ...grpc.CallOption) (*Status, error)
 	RetirarOrden(ctx context.Context, in *Camion, opts ...grpc.CallOption) (*Camion, error)
 	DevolverOrden(ctx context.Context, in *Camion, opts ...grpc.CallOption) (*Camion, error)
+	ReporteEntrega(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Confirmation, error)
 }
 
 type solicitudClient struct {
@@ -77,6 +78,15 @@ func (c *solicitudClient) DevolverOrden(ctx context.Context, in *Camion, opts ..
 	return out, nil
 }
 
+func (c *solicitudClient) ReporteEntrega(ctx context.Context, in *Order, opts ...grpc.CallOption) (*Confirmation, error) {
+	out := new(Confirmation)
+	err := c.cc.Invoke(ctx, "/cliente.Solicitud/ReporteEntrega", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SolicitudServer is the server API for Solicitud service.
 // All implementations must embed UnimplementedSolicitudServer
 // for forward compatibility
@@ -86,6 +96,7 @@ type SolicitudServer interface {
 	GetStatus(context.Context, *CodigoSeguimiento) (*Status, error)
 	RetirarOrden(context.Context, *Camion) (*Camion, error)
 	DevolverOrden(context.Context, *Camion) (*Camion, error)
+	ReporteEntrega(context.Context, *Order) (*Confirmation, error)
 	mustEmbedUnimplementedSolicitudServer()
 }
 
@@ -107,6 +118,9 @@ func (UnimplementedSolicitudServer) RetirarOrden(context.Context, *Camion) (*Cam
 }
 func (UnimplementedSolicitudServer) DevolverOrden(context.Context, *Camion) (*Camion, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DevolverOrden not implemented")
+}
+func (UnimplementedSolicitudServer) ReporteEntrega(context.Context, *Order) (*Confirmation, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ReporteEntrega not implemented")
 }
 func (UnimplementedSolicitudServer) mustEmbedUnimplementedSolicitudServer() {}
 
@@ -211,6 +225,24 @@ func _Solicitud_DevolverOrden_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Solicitud_ReporteEntrega_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Order)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SolicitudServer).ReporteEntrega(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/cliente.Solicitud/ReporteEntrega",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SolicitudServer).ReporteEntrega(ctx, req.(*Order))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Solicitud_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "cliente.Solicitud",
 	HandlerType: (*SolicitudServer)(nil),
@@ -234,6 +266,10 @@ var _Solicitud_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DevolverOrden",
 			Handler:    _Solicitud_DevolverOrden_Handler,
+		},
+		{
+			MethodName: "ReporteEntrega",
+			Handler:    _Solicitud_ReporteEntrega_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
