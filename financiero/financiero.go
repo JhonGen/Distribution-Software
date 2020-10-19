@@ -37,7 +37,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 			f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
 			_, err = f.WriteString("Pedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + " Balance:" + ganancia)
 			if err != nil {
-				log.Fatal("whoops")
+				log.Fatal(err)
 			}
 			err = f.Close()
 
@@ -47,7 +47,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 			f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
 			_, err = f.WriteString("Pedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + " Balance:" + ganancia + ":\n")
 			if err != nil {
-				log.Fatal("whoops")
+				log.Fatal(err)
 			}
 			err = f.Close()
 		} else if mensajeStruct.Status == "Entregado" && mensajeStruct.Order[5] == "true" {
@@ -56,7 +56,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 			f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
 			_, err = f.WriteString("Pedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + " Balance:" + ganancia + ":\n")
 			if err != nil {
-				log.Fatal("whoops")
+				log.Fatal(err)
 			}
 			err = f.Close()
 
@@ -66,7 +66,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 			f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
 			_, err = f.WriteString("Pedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + " Balance:" + ganancia + ":\n")
 			if err != nil {
-				log.Fatal("whoops")
+				log.Fatal(err)
 			}
 			err = f.Close()
 

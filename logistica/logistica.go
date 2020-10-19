@@ -66,7 +66,6 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 
 			if b.Order.Id == a.Id && a.Nombre == b.Order.Nombre {
 
-				fmt.Printf("nombre del fallo= %v\n", b.Order.Nombre)
 				reparto[i].Order.Intentos += 1
 				solicitud.Order = reparto[i].Order
 				solicitud.Seguimiento = reparto[i].Seguimiento
@@ -89,11 +88,11 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 						copy(list[2:], list[1:])
 
 						list[1] = solicitud
-						fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
+
 						return list, reparto
 					} else if len(list) <= 1 {
 						list = append(list, solicitud)
-						fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
+
 						return list, reparto
 
 					}
@@ -110,12 +109,12 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 					copy(list[2:], list[1:])
 
 					list[1] = solicitud
-					fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
+
 					return list, reparto
 
 				} else if len(list) <= 1 {
 					list = append(list, solicitud)
-					fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
+
 					return list, reparto
 
 				}
@@ -314,7 +313,7 @@ func (s *LogisticaServer) RetirarOrden(ctx context.Context, camion *protos.Camio
 
 func (s *LogisticaServer) DevolverOrden(ctx context.Context, camion *protos.Camion) (*protos.Camion, error) {
 	if camion.Orden1 != nil {
-		fmt.Printf("el pedido %v falló", camion.Orden1.Nombre)
+
 		if camion.Tipo == "pymes" {
 			s.queuedPymes, s.queuedReparto = sumarIntentos(camion.Orden1, s.queuedPymes, s.queuedReparto)
 		} else if camion.Tipo == "retail" {
@@ -322,7 +321,7 @@ func (s *LogisticaServer) DevolverOrden(ctx context.Context, camion *protos.Cami
 		}
 	}
 	if camion.Orden2 != nil {
-		fmt.Printf("el pedido %v falló", camion.Orden2.Nombre)
+
 		if camion.Tipo == "pymes" {
 			s.queuedPymes, s.queuedReparto = sumarIntentos(camion.Orden2, s.queuedPymes, s.queuedReparto)
 		} else if camion.Tipo == "retail" {
