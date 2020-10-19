@@ -3,8 +3,8 @@
 
 se puede escoger entre cliente "pymes" o  "retail" con un tiempo de entrega de solicitud delay a establecer
 
-go run cliente.go -tipo_cliente=pymes -delay=1
-go run cliente.go -tipo_cliente=reatil -delay=3
+    - go run cliente.go -tipo_cliente=pymes -delay=1
+    - go run cliente.go -tipo_cliente=reatil -delay=3
 
 
 ## Maquina 2: Camiones
