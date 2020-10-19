@@ -56,57 +56,64 @@ func remove(slice []Solicitud, s int) []Solicitud {
 func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]Solicitud, []Solicitud) {
 
 	solicitud := Solicitud{}
-	for i, b := range reparto {
-		if b.Order.Id == a.Id && a.Nombre == b.Order.Nombre {
-			fmt.Printf("nombre del fallo= %v\n", b.Order.Nombre)
-			reparto[i].Order.Intentos += 1
-			solicitud.Order = reparto[i].Order
-			solicitud.Seguimiento = reparto[i].Seguimiento
-			solicitud.Status = reparto[i].Status
-			//inReparto = i
-			break
-		}
-	}
+	if a != nil && reparto != nil {
+		for i, b := range reparto {
 
-	if a.TipoCliente == "retail" {
+			if b.Order.Id == a.Id && a.Nombre == b.Order.Nombre {
 
-		if solicitud.Order.Intentos >= 3 {
-
-		} else if solicitud.Order.Intentos < 3 {
-			if len(list) > 1 {
-
-				list = append(list, solicitud)
-				copy(list[2:], list[1:])
-
-				list[1] = solicitud
-				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
-				return list, reparto
-			} else if len(list) <= 1 {
-				list = append(list, solicitud)
-				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
-				return list, reparto
-
+				fmt.Printf("nombre del fallo= %v\n", b.Order.Nombre)
+				reparto[i].Order.Intentos += 1
+				solicitud.Order = reparto[i].Order
+				solicitud.Seguimiento = reparto[i].Seguimiento
+				solicitud.Status = reparto[i].Status
+				//inReparto = i
+				break
 			}
-
 		}
-	}
-	if a.TipoCliente == "pymes" {
-		if a.Valor <= 10*(1+int32(solicitud.Order.Intentos)) || solicitud.Order.Intentos >= 2 {
-		} else {
-			if len(list) > 1 {
 
-				list = append(list, solicitud)
-				copy(list[2:], list[1:])
+		if a != nil {
 
-				list[1] = solicitud
-				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
-				return list, reparto
+			if a.TipoCliente == "retail" {
 
-			} else if len(list) <= 1 {
-				list = append(list, solicitud)
-				fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
-				return list, reparto
+				if solicitud.Order.Intentos >= 3 {
 
+				} else if solicitud.Order.Intentos < 3 {
+					if len(list) > 1 {
+
+						list = append(list, solicitud)
+						copy(list[2:], list[1:])
+
+						list[1] = solicitud
+						fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
+						return list, reparto
+					} else if len(list) <= 1 {
+						list = append(list, solicitud)
+						fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
+						return list, reparto
+
+					}
+
+				}
+			}
+		}
+		if a.TipoCliente == "pymes" {
+			if a.Valor <= 10*(1+int32(solicitud.Order.Intentos)) || solicitud.Order.Intentos >= 2 {
+			} else {
+				if len(list) > 1 {
+
+					list = append(list, solicitud)
+					copy(list[2:], list[1:])
+
+					list[1] = solicitud
+					fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
+					return list, reparto
+
+				} else if len(list) <= 1 {
+					list = append(list, solicitud)
+					fmt.Printf("cantidad de intentos: %v  \n", solicitud.Order.Intentos)
+					return list, reparto
+
+				}
 			}
 		}
 	}
@@ -159,7 +166,7 @@ func main() {
 	var opts []grpc.ServerOption
 	grpcServer := grpc.NewServer(opts...)
 	protos.RegisterSolicitudServer(grpcServer, &LogisticaServer{})
-	fmt.Printf("escuchando")
+	fmt.Printf("escuchando\n")
 	grpcServer.Serve(listener)
 
 	defer grpcServer.Stop()
