@@ -40,7 +40,7 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
 			_, err = f.WriteString(camion.Orden1.Id + "," + camion.Orden1.TipoCliente + "," + value + "," + camion.Orden1.Tienda + "," + inte + "," + t.String() + "\n")
 			if err != nil {
-				log.Fatal("whoops")
+				log.Fatal("err")
 			}
 			err = f.Close()
 
@@ -55,7 +55,7 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
 			_, err = f.WriteString(camion.Orden1.Id + "," + camion.Orden1.TipoCliente + "," + value + "," + camion.Orden1.Tienda + "," + inte + "," + "0" + "\n")
 			if err != nil {
-				log.Fatal("whoops")
+				log.Fatal(err)
 			}
 			err = f.Close()
 			camion.Estado = "Con paquete de vuelta"
@@ -72,7 +72,7 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
 			_, err = f.WriteString(camion.Orden2.Id + "," + camion.Orden2.TipoCliente + "," + value + "," + camion.Orden2.Tienda + "," + inte + "," + t.String() + "\n")
 			if err != nil {
-				log.Fatal("whoops")
+				log.Fatal(err)
 			}
 			err = f.Close()
 			fmt.Printf("Orden " + camion.Orden2.Nombre + " Entregada exitosamente\n")
@@ -85,7 +85,7 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
 			_, err = f.WriteString(camion.Orden2.Id + "," + camion.Orden2.TipoCliente + "," + value + "," + camion.Orden2.Tienda + "," + inte + "," + "0" + "\n")
 			if err != nil {
-				log.Fatal("whoops")
+				log.Fatal(err)
 			}
 			err = f.Close()
 			fmt.Printf("Orden " + camion.Orden2.Nombre + " Entrega fallida\n")
