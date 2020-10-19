@@ -41,7 +41,7 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			if err != nil {
 				log.Fatal(err)
 			}
-			err = f.Close()
+
 			_, err = f.WriteString(camion.Orden1.Id + "," + camion.Orden1.TipoCliente + "," + value + "," + camion.Orden1.Tienda + "," + inte + "," + t.String() + "\n")
 			if err != nil {
 				log.Fatal(err)
@@ -60,7 +60,7 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			if err != nil {
 				log.Fatal(err)
 			}
-			err = f.Close()
+
 			_, err = f.WriteString(camion.Orden1.Id + "," + camion.Orden1.TipoCliente + "," + value + "," + camion.Orden1.Tienda + "," + inte + "," + "0" + "\n")
 			if err != nil {
 				log.Fatal(err)
@@ -81,7 +81,7 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			if err != nil {
 				log.Fatal(err)
 			}
-			err = f.Close()
+
 			_, err = f.WriteString(camion.Orden2.Id + "," + camion.Orden2.TipoCliente + "," + value + "," + camion.Orden2.Tienda + "," + inte + "," + t.String() + "\n")
 			if err != nil {
 				log.Fatal(err)
@@ -98,7 +98,7 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			if err != nil {
 				log.Fatal(err)
 			}
-			err = f.Close()
+
 			_, err = f.WriteString(camion.Orden2.Id + "," + camion.Orden2.TipoCliente + "," + value + "," + camion.Orden2.Tienda + "," + inte + "," + "0" + "\n")
 			if err != nil {
 				log.Fatal(err)
