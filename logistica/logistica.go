@@ -319,6 +319,7 @@ func (s *LogisticaServer) ReporteEntrega(ctx context.Context, orden *protos.Orde
 		solicitud.Status = "Entregado"
 		s.queuedBalance = append(s.queuedBalance, solicitud)
 		confirmation.ConfirmationMessage = "Orden enviada a balance"
+		ReportarFinanzas(solicitud)
 		return confirmation, nil
 	} else {
 		if orden.TipoCliente == "retail" {
@@ -326,12 +327,16 @@ func (s *LogisticaServer) ReporteEntrega(ctx context.Context, orden *protos.Orde
 				solicitud.Status = "No Entregado"
 				confirmation.ConfirmationMessage = "Orden enviada a balance"
 				s.queuedBalance = append(s.queuedBalance, solicitud)
+				ReportarFinanzas(solicitud)
+				return confirmation, nil
 			}
 		} else if orden.TipoCliente == "pymes" {
 			if orden.Valor >= 10*(orden.Intentos) || orden.Intentos >= 2 {
 				solicitud.Status = "No Entregado"
 				confirmation.ConfirmationMessage = "Orden enviada a balance"
 				s.queuedBalance = append(s.queuedBalance, solicitud)
+				ReportarFinanzas(solicitud)
+				return confirmation, nil
 
 			}
 		}
