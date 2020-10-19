@@ -1,16 +1,17 @@
 # Distribucion  y Ejecución de máquinas
 Al entrar a cada una de las maquinas, se debe entrar a la carpeta /TAREA1_SD
 en la que se encontrarán las carpetas : 
-     - camiones
-     - cliente
-     - logistica
-     - financiero
+- camiones
+- cliente
+- logistica
+- financiero
 ## Maquina 1: Cliente 
 
 
 
-se puede escoger entre cliente "pymes" o  "retail" con un tiempo de entrega de solicitud delay a establecer
-se entra a la carpeta /cliente : 
+se puede escoger entre cliente "pymes" o  "retail" con un tiempo de entrega de solicitud delay a establecer.
+
+- se entra a la carpeta /cliente : 
 
     - go run cliente.go -tipo_cliente=pymes -delay=1
     - go run cliente.go -tipo_cliente=reatil -delay=3
