@@ -139,7 +139,7 @@ func ReportarFinanzas(solicitud Solicitud) {
 	mensajeStruct.Order = arregloOrden
 	mensajeStruct.Status = solicitud.Status
 	mensaje, _ := json.Marshal(mensajeStruct)
-	conn, err := amqp.Dial("amqp://guest:guest@10.10.28.47:5672/")
+	conn, err := amqp.Dial("amqp://admin:password@10.10.28.47:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 	ch, err := conn.Channel()
@@ -175,7 +175,7 @@ func failOnError(err error, msg string) {
 }
 
 func main() {
-	listener, err := net.Listen("tcp", "localhost:4040")
+	listener, err := net.Listen("tcp", "10.10.28.47:4040")
 	if err != nil {
 		panic(err)
 	}
