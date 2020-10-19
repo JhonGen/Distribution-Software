@@ -38,6 +38,10 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			value := strconv.Itoa(int(camion.Orden1.Valor))
 			inte := strconv.Itoa(int(camion.Orden1.Intentos))
 			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
+			if err != nil {
+				log.Fatal(err)
+			}
+			err = f.Close()
 			_, err = f.WriteString(camion.Orden1.Id + "," + camion.Orden1.TipoCliente + "," + value + "," + camion.Orden1.Tienda + "," + inte + "," + t.String() + "\n")
 			if err != nil {
 				log.Fatal(err)
@@ -53,6 +57,10 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			value := strconv.Itoa(int(camion.Orden1.Valor))
 			inte := strconv.Itoa(int(camion.Orden1.Intentos))
 			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
+			if err != nil {
+				log.Fatal(err)
+			}
+			err = f.Close()
 			_, err = f.WriteString(camion.Orden1.Id + "," + camion.Orden1.TipoCliente + "," + value + "," + camion.Orden1.Tienda + "," + inte + "," + "0" + "\n")
 			if err != nil {
 				log.Fatal(err)
@@ -70,6 +78,10 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			value := strconv.Itoa(int(camion.Orden2.Valor))
 			inte := strconv.Itoa(int(camion.Orden2.Intentos))
 			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
+			if err != nil {
+				log.Fatal(err)
+			}
+			err = f.Close()
 			_, err = f.WriteString(camion.Orden2.Id + "," + camion.Orden2.TipoCliente + "," + value + "," + camion.Orden2.Tienda + "," + inte + "," + t.String() + "\n")
 			if err != nil {
 				log.Fatal(err)
@@ -83,6 +95,10 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			value := strconv.Itoa(int(camion.Orden2.Valor))
 			inte := strconv.Itoa(int(camion.Orden2.Intentos))
 			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
+			if err != nil {
+				log.Fatal(err)
+			}
+			err = f.Close()
 			_, err = f.WriteString(camion.Orden2.Id + "," + camion.Orden2.TipoCliente + "," + value + "," + camion.Orden2.Tienda + "," + inte + "," + "0" + "\n")
 			if err != nil {
 				log.Fatal(err)
