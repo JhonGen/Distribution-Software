@@ -1,1 +1,12 @@
-Pedido: BE127(Secador de pelo) EntregadoBalance:19.500000Pedido: BE855(Acondicionador) EntregadoBalance:13.000000Pedido: PF654(Placa madre) EntregadoBalance:65.000000Pedido: PF111(Ventilador) EntregadoBalance:13.000000Pedido: PF225(Fuente de poder) EntregadoBalance:32.500000Pedido: BE785(Crema para peinar) EntregadoBalance:10.400000Pedido: OF352(Set de plumones) EntregadoBalance:11.700000Pedido: DE245(Palo de golf) EntregadoBalance:23.400000Pedido: DE654(Pelota de futbol) EntregadoBalance:14.300000Pedido: CC147(Pantalón) EntregadoBalance:14.300000Pedido: CC147(Sueter) EntregadoBalance:18.200000Pedido: CC175(Bufanda) EntregadoBalance:7.800000Pedido: PF452(Tarjeta de video) EntregadoBalance:139.500000Pedido: PF542(Procesador I) EntregadoBalance:117.000000Pedido: PF125(Procesador R) EntregadoBalance:97.500000Pedido: PF354(Memoria RAM) EntregadoBalance:28.600000Pedido: PF245(Gabinete) EntregadoBalance:26.000000Pedido: CC124(Abrigo) EntregadoBalance:22.100000Pedido: DE123(Zapatillas de futbol) EntregadoBalance:20.800000Pedido: CC122(Polera) EntregadoBalance:11.700000Pedido: CC454(Polera) EntregadoBalance:9.100000Pedido: GG301(Chia: 500 g) EntregadoBalance:7.800000Pedido: GG124(Mani: 1 Kg) EntregadoBalance:6.500000Pedido: GG568(Almendras: 500 g) EntregadoBalance:6.500000Pedido: OF554(Lapices) EntregadoBalance:5.200000Pedido: GG257(Pistachos: 200 g) EntregadoBalance:5.200000
+Pedido: BE127(Secador de pelo) EntregadoBalance:19.500000
+Pedido: BE666(Jabón para la ducha) EntregadoBalance:10.400000
+Pedido: BE785(Crema para peinar) EntregadoBalance:10.400000
+Pedido: PF225(Fuente de poder) EntregadoBalance:32.500000
+Pedido: PF111(Ventilador) EntregadoBalance:13.000000
+Pedido: PF452(Tarjeta de video) EntregadoBalance:149.500000
+Pedido: OF352(Set de plumones) EntregadoBalance:11.700000
+Pedido: DE654(Pelota de futbol) EntregadoBalance:14.300000
+Pedido: DE245(Palo de golf) EntregadoBalance:23.400000
+Pedido: GG124(Mani: 1 Kg) EntregadoBalance:6.500000
+Pedido: GG568(Almendras: 500 g) EntregadoBalance:6.500000
+Pedido: OF554(Lapices) EntregadoBalance:5.200000
