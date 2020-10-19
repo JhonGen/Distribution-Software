@@ -119,7 +119,7 @@ func main() {
 		ganancia := ObtenerGanancia(scanner.Text())
 		balanceGeneral = append(balanceGeneral, ganancia)
 	}
-	conn, err := amqp.Dial("amqp://guest:guest@10.10.28.47:5672/")
+	conn, err := amqp.Dial("amqp://admin:password@10.10.28.47:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 	ch, err := conn.Channel()
