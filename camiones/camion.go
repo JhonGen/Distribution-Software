@@ -118,12 +118,8 @@ func main() {
 	camion.TiempoEspera = int32(*delay)
 	camion.Orden1 = nil
 	camion.Orden2 = nil
-	f1, _ := os.Create("camion1.txt")
+	f1, _ := os.Create("camion" + *nro_camion + ".txt")
 	f1.Close()
-	f2, _ := os.Create("camion2.txt")
-	f2.Close()
-	f3, _ := os.Create("camion3.txt")
-	f3.Close()
 
 	for true {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
