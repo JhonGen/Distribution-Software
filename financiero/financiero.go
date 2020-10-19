@@ -1,16 +1,28 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
 	"github.com/streadway/amqp"
 )
 
+type MensajeFinanzas struct {
+	Order  []string
+	Status string
+}
+
 func failOnError(err error, msg string) {
 	if err != nil {
 		log.Fatalf("%s: %s", msg, err)
 	}
+}
+
+func HacerCalculos(mensaje []byte) {
+	mensajeStruct := MensajeFinanzas{}
+	json.Unmarshal(mensaje, &mensajeStruct)
+
 }
 
 func main() {
@@ -34,6 +46,7 @@ func main() {
 	go func() {
 		for d := range mensajes {
 			fmt.Printf("mensaje recibido: %s\n", d.Body)
+			HacerCalculos(d.Body)
 		}
 	}()
 

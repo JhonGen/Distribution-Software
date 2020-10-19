@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"math/rand"
@@ -29,6 +30,10 @@ type LogisticaServer struct {
 	queuedRetail       []Solicitud
 	queuedReparto      []Solicitud
 	queuedBalance      []Solicitud
+}
+type MensajeFinanzas struct {
+	Order  []string
+	Status string
 }
 
 func getIndex(cola []Solicitud, value Solicitud) int {
@@ -115,20 +120,18 @@ func sumarIntentos(a *protos.Order, list []Solicitud, reparto []Solicitud) ([]So
 }
 
 func ReportarFinanzas(solicitud Solicitud) {
-
-}
-
-func failOnError(err error, msg string) {
-	if err != nil {
-		log.Fatalf("%s: %s", msg, err)
-	}
-}
-
-func main() {
-	listener, err := net.Listen("tcp", "localhost:4040")
-	if err != nil {
-		panic(err)
-	}
+	mensajeStruct := MensajeFinanzas{}
+	var arregloOrden []string
+	arregloOrden = append(arregloOrden, solicitud.Order.Id)
+	arregloOrden = append(arregloOrden, solicitud.Order.Nombre)
+	arregloOrden = append(arregloOrden, strconv.Itoa(int(solicitud.Order.Valor)))
+	arregloOrden = append(arregloOrden, solicitud.Order.Tienda)
+	arregloOrden = append(arregloOrden, solicitud.Order.Destino)
+	arregloOrden = append(arregloOrden, strconv.FormatBool(solicitud.Order.Prioritario))
+	arregloOrden = append(arregloOrden, strconv.Itoa(int(solicitud.Order.Intentos)))
+	mensajeStruct.Order = arregloOrden
+	mensajeStruct.Status = solicitud.Status
+	mensaje, _ := json.Marshal(mensajeStruct)
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
@@ -151,11 +154,24 @@ func main() {
 		false,
 		amqp.Publishing{
 			ContentType: "text/plain",
-			Body:        []byte("chupame el pene"),
+			Body:        []byte(mensaje),
 		},
 	)
 
 	failOnError(err, "fallo el publish ctm")
+}
+
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
+	}
+}
+
+func main() {
+	listener, err := net.Listen("tcp", "localhost:4040")
+	if err != nil {
+		panic(err)
+	}
 	var opts []grpc.ServerOption
 	grpcServer := grpc.NewServer(opts...)
 	protos.RegisterSolicitudServer(grpcServer, &LogisticaServer{})
@@ -315,6 +331,7 @@ func (s *LogisticaServer) ReporteEntrega(ctx context.Context, orden *protos.Orde
 	solicitud := Solicitud{}
 	confirmation := &protos.Confirmation{}
 	solicitud.Order = orden
+	fmt.Printf("%v\n", orden.Apruebo)
 	if orden.Apruebo {
 		solicitud.Status = "Entregado"
 		s.queuedBalance = append(s.queuedBalance, solicitud)

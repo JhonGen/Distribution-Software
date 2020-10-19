@@ -21,14 +21,18 @@ var (
 	nro_camion    = flag.String("nro_camion", "", "camion a escojer")
 )
 
-func intentarEntrega(camion *protos.Camion) *protos.Camion {
+func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *protos.Camion {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	chance1 := rand.Intn(100)
 	chance2 := rand.Intn(100)
+	defer cancel()
 	if camion.Orden1 != nil {
 		if chance1 <= 80 {
 			fmt.Printf("Orden " + camion.Orden1.Nombre + " Entregada exitosamente\n")
 			//ReporteEntrega(camion.Orden1)
-
+			camion.Orden1.Apruebo = true
+			confirmacion, _ := cliente.ReporteEntrega(ctx, camion.Orden1)
+			fmt.Printf("%v\n", confirmacion)
 			t := time.Now()
 
 			value := strconv.Itoa(int(camion.Orden1.Valor))
@@ -44,6 +48,8 @@ func intentarEntrega(camion *protos.Camion) *protos.Camion {
 
 		} else {
 			fmt.Printf("Orden " + camion.Orden1.Nombre + " Entrega fallida\n")
+			confirmacion, _ := cliente.ReporteEntrega(ctx, camion.Orden1)
+			fmt.Printf("%v\n", confirmacion)
 			value := strconv.Itoa(int(camion.Orden1.Valor))
 			inte := strconv.Itoa(int(camion.Orden1.Intentos))
 			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
@@ -58,7 +64,9 @@ func intentarEntrega(camion *protos.Camion) *protos.Camion {
 	if camion.Orden2 != nil {
 		if chance2 <= 80 {
 			t := time.Now()
-
+			camion.Orden2.Apruebo = true
+			confirmacion, _ := cliente.ReporteEntrega(ctx, camion.Orden2)
+			fmt.Printf("%v\n", confirmacion)
 			value := strconv.Itoa(int(camion.Orden2.Valor))
 			inte := strconv.Itoa(int(camion.Orden2.Intentos))
 			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
@@ -70,6 +78,8 @@ func intentarEntrega(camion *protos.Camion) *protos.Camion {
 			fmt.Printf("Orden " + camion.Orden2.Nombre + " Entregada exitosamente\n")
 			camion.Orden2 = nil
 		} else {
+			confirmacion, _ := cliente.ReporteEntrega(ctx, camion.Orden2)
+			fmt.Printf("%v\n", confirmacion)
 			value := strconv.Itoa(int(camion.Orden2.Valor))
 			inte := strconv.Itoa(int(camion.Orden2.Intentos))
 			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
@@ -123,7 +133,7 @@ func main() {
 		}
 
 		fmt.Printf(camion.Estado + "\n")
-		camion = intentarEntrega(camion)
+		camion = intentarEntrega(camion, camionCliente)
 		camion, err3 := camionCliente.DevolverOrden(ctx, camion)
 		if err3 != nil {
 			panic(err3)
