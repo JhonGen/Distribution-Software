@@ -35,7 +35,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 			balance = append(balance, valor*0.3-10*intentos)
 			ganancia := fmt.Sprintf("%f", valor*0.3-10*intentos)
 			f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
-			_, err = f.WriteString("\nPedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + "Balance:" + ganancia)
+			_, err = f.WriteString("Pedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + " Balance:" + ganancia)
 			if err != nil {
 				log.Fatal("whoops")
 			}
@@ -45,7 +45,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 			balance = append(balance, -10*intentos)
 			ganancia := fmt.Sprintf("%f", -10*intentos)
 			f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
-			_, err = f.WriteString("\nPedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + "Balance:" + ganancia)
+			_, err = f.WriteString("Pedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + " Balance:" + ganancia + ":\n")
 			if err != nil {
 				log.Fatal("whoops")
 			}
@@ -54,7 +54,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 			balance = append(balance, valor*1.3-10*intentos)
 			ganancia := fmt.Sprintf("%f", valor*1.3-10*intentos)
 			f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
-			_, err = f.WriteString("\nPedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + "Balance:" + ganancia)
+			_, err = f.WriteString("Pedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + " Balance:" + ganancia + ":\n")
 			if err != nil {
 				log.Fatal("whoops")
 			}
@@ -64,7 +64,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 			balance = append(balance, valor*1.3-10*intentos)
 			ganancia := fmt.Sprintf("%f", valor*1.3-10*intentos)
 			f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
-			_, err = f.WriteString("\nPedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + "Balance:" + ganancia)
+			_, err = f.WriteString("Pedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + " Balance:" + ganancia + ":\n")
 			if err != nil {
 				log.Fatal("whoops")
 			}
@@ -75,7 +75,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 		balance = append(balance, valor-10*intentos)
 		ganancia := fmt.Sprintf("%f", valor-10*intentos)
 		f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
-		_, err = f.WriteString("\nPedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + "Ganancia:" + ganancia)
+		_, err = f.WriteString("\nPedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + "Ganancia:" + ganancia + ":\n")
 		if err != nil {
 			log.Fatal("whoops")
 		}

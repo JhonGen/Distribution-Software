@@ -1,12 +1,48 @@
-Pedido: BE127(Secador de pelo) EntregadoBalance:19.500000
-Pedido: BE666(Jabón para la ducha) EntregadoBalance:10.400000
-Pedido: BE785(Crema para peinar) EntregadoBalance:10.400000
-Pedido: PF225(Fuente de poder) EntregadoBalance:32.500000
-Pedido: PF111(Ventilador) EntregadoBalance:13.000000
-Pedido: PF452(Tarjeta de video) EntregadoBalance:149.500000
-Pedido: OF352(Set de plumones) EntregadoBalance:11.700000
-Pedido: DE654(Pelota de futbol) EntregadoBalance:14.300000
-Pedido: DE245(Palo de golf) EntregadoBalance:23.400000
-Pedido: GG124(Mani: 1 Kg) EntregadoBalance:6.500000
-Pedido: GG568(Almendras: 500 g) EntregadoBalance:6.500000
-Pedido: OF554(Lapices) EntregadoBalance:5.200000
+Pedido: BE666(Jabón para la ducha) Entregado Balance:10.400000
+Pedido: BE855(Acondicionador) Entregado Balance:13.000000
+Pedido: BE785(Crema para peinar) Entregado Balance:10.400000
+Pedido: BE654(Shampoo) Entregado Balance:13.000000
+Pedido: PF125(Procesador R) Entregado Balance:97.500000
+Pedido: PF111(Ventilador) Entregado Balance:13.000000
+Pedido: PF225(Fuente de poder) Entregado Balance:32.500000
+Pedido: PF654(Placa madre) Entregado Balance:55.000000
+Pedido: PF452(Tarjeta de video) Entregado Balance:149.500000
+Pedido: PF542(Procesador I) Entregado Balance:117.000000
+Pedido: OF352(Set de plumones) Entregado Balance:11.700000
+Pedido: PF354(Memoria RAM) Entregado Balance:28.600000
+Pedido: OF754(Cuadernos) Entregado Balance:6.500000
+Pedido: DE786(Raqueta de tenis) Entregado Balance:19.500000
+Pedido: DE654(Pelota de futbol) Entregado Balance:14.300000
+Pedido: DE245(Palo de golf) Entregado Balance:23.400000
+Pedido: CC122(Polera) Entregado Balance:11.700000
+Pedido: CC121(Chaqueta) Entregado Balance:20.800000
+Pedido: CC147(Sueter) Entregado Balance:18.200000
+Pedido: CC121(Pantalón) Entregado Balance:13.000000
+Pedido: GG124(Mani: 1 Kg) Entregado Balance:6.500000
+Pedido: GG301(Chia: 500 g) Entregado Balance:7.800000
+Pedido: GG568(Almendras: 500 g) Entregado Balance:6.500000
+Pedido: GG458(Arroz: 1 Kg) Entregado Balance:3.900000
+Pedido: OF554(Lapices) Entregado Balance:5.200000Pedido: BE127(Secador de pelo) Entregado Balance:19.500000:
+Pedido: BE855(Acondicionador) Entregado Balance:13.000000:
+Pedido: BE785(Crema para peinar) Entregado Balance:10.400000:
+Pedido: PF654(Placa madre) Entregado Balance:65.000000:
+Pedido: PF125(Procesador R) Entregado Balance:87.500000:
+Pedido: PF225(Fuente de poder) Entregado Balance:32.500000:
+Pedido: PF452(Tarjeta de video) Entregado Balance:149.500000:
+Pedido: PF542(Procesador I) Entregado Balance:117.000000:
+Pedido: OF352(Set de plumones) Entregado Balance:11.700000:
+Pedido: PF354(Memoria RAM) Entregado Balance:28.600000:
+Pedido: DE123(Zapatillas de futbol) Entregado Balance:20.800000:
+Pedido: OF754(Cuadernos) Entregado Balance:6.500000:
+Pedido: DE786(Raqueta de tenis) Entregado Balance:19.500000:
+Pedido: DE245(Palo de golf) Entregado Balance:23.400000:
+Pedido: CC147(Pantalón) Entregado Balance:14.300000:
+Pedido: CC175(Bufanda) Entregado Balance:7.800000:
+Pedido: CC121(Pantalón) Entregado Balance:13.000000:
+Pedido: CC454(Polera) Entregado Balance:9.100000:
+Pedido: OF554(Lapices) Entregado Balance:5.200000:
+Pedido: GG124(Mani: 1 Kg) Entregado Balance:6.500000:
+Pedido: GG568(Almendras: 500 g) Entregado Balance:6.500000:
+Pedido: GG458(Arroz: 1 Kg) Entregado Balance:3.900000:
+Pedido: GG301(Chia: 500 g) Entregado Balance:7.800000:
+Pedido: GG257(Pistachos: 200 g) Entregado Balance:5.200000:
