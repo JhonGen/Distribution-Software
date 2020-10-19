@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/signal"
 	"strconv"
 	"strings"
+	"syscall"
 
 	"github.com/streadway/amqp"
 )
@@ -81,6 +83,24 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 	}
 	return balance
 }
+func PrintBalance(balance []float64) {
+	suma := float64(0)
+	for _, b := range balance {
+		suma += b
+	}
+	fmt.Printf("El balance final es: %f", suma)
+}
+
+func SetupCloseHandler(balance []float64) {
+	c := make(chan os.Signal)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		fmt.Println("\r- Ctrl+C pressed in Terminal")
+		PrintBalance(balance)
+		os.Exit(0)
+	}()
+}
 func ObtenerGanancia(linea string) float64 {
 	lineaSeparada := strings.Split(linea, ":")
 	flotante, _ := strconv.ParseFloat(lineaSeparada[2], 64)
@@ -121,8 +141,9 @@ func main() {
 			balanceGeneral = HacerCalculos(d.Body, balanceGeneral)
 		}
 	}()
+	SetupCloseHandler(balanceGeneral)
 
-	fmt.Printf("Succesfully connected to pichula\n")
-	fmt.Printf("esperando mas pichula\n")
+	fmt.Printf("Succesfully connected to logistica\n")
+	fmt.Printf("esperando reportes\n")
 	<-forever
 }
