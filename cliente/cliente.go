@@ -22,7 +22,6 @@ var (
 )
 
 func ShowMakeOrder(linea string, client protos.SolicitudClient) {
-	fmt.Println(linea)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	lineaSeparada := strings.Split(linea, ",")
@@ -78,7 +77,6 @@ func main() {
 	flag.Parse()
 	fmt.Printf("tipo_cliente: %v\n", *tipoCliente)
 	conn, err := grpc.Dial("10.10.28.47:4040", grpc.WithInsecure())
-
 	if err != nil {
 		panic(err)
 	}
@@ -86,9 +84,9 @@ func main() {
 	client := protos.NewSolicitudClient(conn)
 
 	if *tipoCliente != "" {
-		file, err2 := os.Open("../" + *tipoCliente + ".csv")
-		if err2 != nil {
-			log.Fatal(err2)
+		file, err := os.Open("../" + *tipoCliente + ".csv")
+		if err != nil {
+			log.Fatal(err)
 		}
 		defer file.Close()
 
@@ -102,8 +100,8 @@ func main() {
 
 		}
 
-		if err4 := scanner.Err(); err4 != nil {
-			log.Fatal(err4)
+		if err := scanner.Err(); err != nil {
+			log.Fatal(err)
 		}
 	}
 
