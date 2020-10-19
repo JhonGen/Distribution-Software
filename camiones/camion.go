@@ -106,7 +106,7 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 func main() {
 	flag.Parse()
 	fmt.Printf("tipo_camion: %v\n", *tipoCamion)
-	conn, err := grpc.Dial("10.10.28.47:4040", grpc.WithInsecure())
+	conn, err := grpc.Dial("localhost:4040", grpc.WithInsecure())
 	if err != nil {
 		panic(err)
 	}

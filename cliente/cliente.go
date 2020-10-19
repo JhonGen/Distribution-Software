@@ -77,7 +77,7 @@ func obtenerEstado(codigo int, client protos.SolicitudClient) {
 func main() {
 	flag.Parse()
 	fmt.Printf("tipo_cliente: %v\n", *tipoCliente)
-	conn, err := grpc.Dial("10.10.28.47:4040", grpc.WithInsecure())
+	conn, err := grpc.Dial("localhost:4040", grpc.WithInsecure())
 
 	if err != nil {
 		panic(err)

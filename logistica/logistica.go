@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"net"
+	"os"
 	"sort"
 	"strconv"
 	"time"
@@ -175,7 +176,7 @@ func failOnError(err error, msg string) {
 }
 
 func main() {
-	listener, err := net.Listen("tcp", "10.10.28.47:4040")
+	listener, err := net.Listen("tcp", "localhost:4040")
 	if err != nil {
 		panic(err)
 	}
@@ -203,6 +204,12 @@ func (s *LogisticaServer) MakeOrder(ctx context.Context, order *protos.Order) (*
 		solicitud.Order = order
 		solicitud.Status = "En bodega"
 		solicitud.Seguimiento = rand.Intn(999999999)
+		f, err := os.OpenFile("registroLogistica.txt", os.O_APPEND|os.O_WRONLY, 0644)
+		_, err = f.WriteString("Orden:" + solicitud.Order.Id + ":" + solicitud.Order.Nombre + " Seguimiento:" + strconv.Itoa(solicitud.Seguimiento) + "\n")
+		if err != nil {
+			log.Fatal("whoops")
+		}
+		err = f.Close()
 		if solicitud.Order.TipoCliente == "pymes" {
 			if solicitud.Order.Prioritario {
 				s.queuedPrioritarios = append(s.queuedPrioritarios, solicitud)
