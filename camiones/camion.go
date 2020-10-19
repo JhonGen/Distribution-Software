@@ -18,7 +18,7 @@ var (
 	tipoCamion    = flag.String("tipo_camion", "", "tipo de camion que se desea implementar")
 	tiempoEntrega = flag.Int("tiempo_entrega", 0, "tiempo que tarda en realizar una entrega")
 	delay         = flag.Int("delay", 0, "tiempo de espera de solicitud de un camion")
-	nro_camion    = flag.Int("nro_camion", 0, "camion a escojer")
+	nro_camion    = flag.String("nro_camion", "", "camion a escojer")
 )
 
 func intentarEntrega(camion *protos.Camion) *protos.Camion {
@@ -32,8 +32,9 @@ func intentarEntrega(camion *protos.Camion) *protos.Camion {
 			t := time.Now()
 
 			value := strconv.Itoa(int(camion.Orden1.Valor))
-			f, err := os.OpenFile("Camion1.txt", os.O_APPEND|os.O_WRONLY, 0644)
-			_, err = f.WriteString(camion.Orden1.Id + "," + camion.Orden1.TipoCliente + "," + value + "," + camion.Orden1.Tienda + "," + t.String() + "\n")
+			inte := strconv.Itoa(int(camion.Orden1.Intentos))
+			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
+			_, err = f.WriteString(camion.Orden1.Id + "," + camion.Orden1.TipoCliente + "," + value + "," + camion.Orden1.Tienda + "," + inte + "," + t.String() + "\n")
 			if err != nil {
 				log.Fatal("whoops")
 			}
@@ -43,14 +44,40 @@ func intentarEntrega(camion *protos.Camion) *protos.Camion {
 
 		} else {
 			fmt.Printf("Orden " + camion.Orden1.Nombre + " Entrega fallida\n")
+			value := strconv.Itoa(int(camion.Orden1.Valor))
+			inte := strconv.Itoa(int(camion.Orden1.Intentos))
+			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
+			_, err = f.WriteString(camion.Orden1.Id + "," + camion.Orden1.TipoCliente + "," + value + "," + camion.Orden1.Tienda + "," + inte + "," + "0" + "\n")
+			if err != nil {
+				log.Fatal("whoops")
+			}
+			err = f.Close()
 			camion.Estado = "Con paquete de vuelta"
 		}
 	}
 	if camion.Orden2 != nil {
 		if chance2 <= 80 {
+			t := time.Now()
+
+			value := strconv.Itoa(int(camion.Orden2.Valor))
+			inte := strconv.Itoa(int(camion.Orden2.Intentos))
+			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
+			_, err = f.WriteString(camion.Orden2.Id + "," + camion.Orden2.TipoCliente + "," + value + "," + camion.Orden2.Tienda + "," + inte + "," + t.String() + "\n")
+			if err != nil {
+				log.Fatal("whoops")
+			}
+			err = f.Close()
 			fmt.Printf("Orden " + camion.Orden2.Nombre + " Entregada exitosamente\n")
 			camion.Orden2 = nil
 		} else {
+			value := strconv.Itoa(int(camion.Orden2.Valor))
+			inte := strconv.Itoa(int(camion.Orden2.Intentos))
+			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
+			_, err = f.WriteString(camion.Orden2.Id + "," + camion.Orden2.TipoCliente + "," + value + "," + camion.Orden2.Tienda + "," + inte + "," + "0" + "\n")
+			if err != nil {
+				log.Fatal("whoops")
+			}
+			err = f.Close()
 			fmt.Printf("Orden " + camion.Orden2.Nombre + " Entrega fallida\n")
 			camion.Estado = "Con paquete de vuelta"
 		}
@@ -81,8 +108,12 @@ func main() {
 	camion.TiempoEspera = int32(*delay)
 	camion.Orden1 = nil
 	camion.Orden2 = nil
-	f, err := os.Create("Camion1.txt")
-	f.Close()
+	f1, _ := os.Create("camion1.txt")
+	f1.Close()
+	f2, _ := os.Create("camion2.txt")
+	f2.Close()
+	f3, _ := os.Create("camion3.txt")
+	f3.Close()
 
 	for true {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
