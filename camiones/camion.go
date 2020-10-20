@@ -37,7 +37,7 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 
 			value := strconv.Itoa(int(camion.Orden1.Valor))
 			inte := strconv.Itoa(int(camion.Orden1.Intentos))
-			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
+			f, err := os.OpenFile("/home/sd/TAREA1_SD/camiones/camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -56,7 +56,7 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			fmt.Printf("%v\n", confirmacion)
 			value := strconv.Itoa(int(camion.Orden1.Valor))
 			inte := strconv.Itoa(int(camion.Orden1.Intentos))
-			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
+			f, err := os.OpenFile("/home/sd/TAREA1_SD/camiones/camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -77,7 +77,7 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			fmt.Printf("%v\n", confirmacion)
 			value := strconv.Itoa(int(camion.Orden2.Valor))
 			inte := strconv.Itoa(int(camion.Orden2.Intentos))
-			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
+			f, err := os.OpenFile("/home/sd/TAREA1_SD/camiones/camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -94,7 +94,7 @@ func intentarEntrega(camion *protos.Camion, cliente protos.SolicitudClient) *pro
 			fmt.Printf("%v\n", confirmacion)
 			value := strconv.Itoa(int(camion.Orden2.Valor))
 			inte := strconv.Itoa(int(camion.Orden2.Intentos))
-			f, err := os.OpenFile("camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
+			f, err := os.OpenFile("/home/sd/TAREA1_SD/camiones/camion"+*nro_camion+".txt", os.O_APPEND|os.O_WRONLY, 0644)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -134,7 +134,7 @@ func main() {
 	camion.TiempoEspera = int32(*delay)
 	camion.Orden1 = nil
 	camion.Orden2 = nil
-	f1, _ := os.Create("camion" + *nro_camion + ".txt")
+	f1, _ := os.Create("/home/sd/TAREA1_SD/camiones/camion" + *nro_camion + ".txt")
 	f1.Close()
 
 	for true {

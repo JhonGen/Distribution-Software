@@ -34,7 +34,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 		if mensajeStruct.Status == "No entregado" && mensajeStruct.Order[5] == "true" {
 			balance = append(balance, valor*0.3-10*intentos)
 			ganancia := fmt.Sprintf("%f", valor*0.3-10*intentos)
-			f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
+			f, err := os.OpenFile("/home/sd/TAREA1_SD/financiero/registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
 			_, err = f.WriteString("Pedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + " Balance:" + ganancia)
 			if err != nil {
 				log.Fatal(err)
@@ -44,7 +44,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 		} else if mensajeStruct.Status == "No entregado" && mensajeStruct.Order[5] == "false" {
 			balance = append(balance, -10*intentos)
 			ganancia := fmt.Sprintf("%f", -10*intentos)
-			f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
+			f, err := os.OpenFile("/home/sd/TAREA1_SD/financiero/registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
 			_, err = f.WriteString("Pedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + " Balance:" + ganancia + ":\n")
 			if err != nil {
 				log.Fatal(err)
@@ -53,7 +53,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 		} else if mensajeStruct.Status == "Entregado" && mensajeStruct.Order[5] == "true" {
 			balance = append(balance, valor*1.3-10*intentos)
 			ganancia := fmt.Sprintf("%f", valor*1.3-10*intentos)
-			f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
+			f, err := os.OpenFile("/home/sd/TAREA1_SD/financiero/registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
 			_, err = f.WriteString("Pedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + " Balance:" + ganancia + ":\n")
 			if err != nil {
 				log.Fatal(err)
@@ -63,7 +63,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 		} else if mensajeStruct.Status == "Entregado" && mensajeStruct.Order[5] == "false" {
 			balance = append(balance, valor*1.3-10*intentos)
 			ganancia := fmt.Sprintf("%f", valor*1.3-10*intentos)
-			f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
+			f, err := os.OpenFile("/home/sd/TAREA1_SD/financiero/registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
 			_, err = f.WriteString("Pedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + " Balance:" + ganancia + ":\n")
 			if err != nil {
 				log.Fatal(err)
@@ -74,7 +74,7 @@ func HacerCalculos(mensaje []byte, balance []float64) []float64 {
 	} else if mensajeStruct.Order[3] == "retail" {
 		balance = append(balance, valor-10*intentos)
 		ganancia := fmt.Sprintf("%f", valor-10*intentos)
-		f, err := os.OpenFile("registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
+		f, err := os.OpenFile("/home/sd/TAREA1_SD/financiero/registro.txt", os.O_APPEND|os.O_WRONLY, 0644)
 		_, err = f.WriteString("\nPedido: " + mensajeStruct.Order[0] + "(" + mensajeStruct.Order[1] + ") " + mensajeStruct.Status + "Ganancia:" + ganancia + ":\n")
 		if err != nil {
 			log.Fatal("whoops")
@@ -108,7 +108,7 @@ func ObtenerGanancia(linea string) float64 {
 }
 func main() {
 	var balanceGeneral []float64
-	file, err2 := os.Open("/home/sd/TAREA1_SD/registro.txt")
+	file, err2 := os.Open("/home/sd/TAREA1_SD/financiero/registro.txt")
 	if err2 != nil {
 		log.Fatal(err2)
 	}

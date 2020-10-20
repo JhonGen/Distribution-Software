@@ -5,6 +5,9 @@ en la que se encontrarán las carpetas :
 - cliente
 - logistica
 - financiero
+
+en cada máquina, al momento de entrar, puede ejecutar "make run" y correrá un archivo con parametros predeterminados, de lo contrario utilizar lo siguiente
+
 ## Maquina 1: Cliente 
 
 
