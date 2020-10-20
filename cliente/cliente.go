@@ -84,7 +84,7 @@ func main() {
 	client := protos.NewSolicitudClient(conn)
 
 	if *tipoCliente != "" {
-		file, err := os.Open("home/sd/TAREA1_SD/" + *tipoCliente + ".csv")
+		file, err := os.Open("/home/sd/TAREA1_SD/" + *tipoCliente + ".csv")
 		if err != nil {
 			log.Fatal(err)
 		}
